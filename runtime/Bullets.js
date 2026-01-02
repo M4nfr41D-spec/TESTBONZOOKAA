@@ -7,6 +7,34 @@ import { Enemies } from './Enemies.js';
 import { Player } from './Player.js';
 
 export const Bullets = {
+  // Spawn a new bullet
+  spawn(config) {
+    State.bullets.push({
+      x: config.x,
+      y: config.y,
+      vx: config.vx || 0,
+      vy: config.vy || -500,
+      damage: config.damage || 10,
+      size: config.size || 4,
+      pierce: config.piercing || 0,
+      hits: 0,
+      isCrit: config.crit || false,
+      isPlayer: config.isPlayer !== false
+    });
+  },
+  
+  // Spawn enemy bullet
+  spawnEnemy(config) {
+    State.enemyBullets.push({
+      x: config.x,
+      y: config.y,
+      vx: config.vx || 0,
+      vy: config.vy || 200,
+      damage: config.damage || 10,
+      size: config.size || 6
+    });
+  },
+  
   // Update all bullets
   update(dt, canvas) {
     // Player bullets
@@ -205,3 +233,11 @@ export const Bullets = {
 };
 
 export default Bullets;
+
+
+
+
+
+
+
+
