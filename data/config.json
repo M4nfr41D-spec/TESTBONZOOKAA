@@ -1,15 +1,23 @@
 {
-  "version": "2.0.0",
+  "version": "2.1.0",
   "name": "BONZOOKAA!",
   
   "player": {
     "baseHP": 100,
     "baseDamage": 10,
-    "baseSpeed": 300,
+    "baseSpeed": 320,
     "baseFireRate": 5,
     "baseCritChance": 5,
     "baseCritDamage": 150,
-    "basePickupRadius": 60
+    "basePickupRadius": 60,
+    "bulletSpeed": 800,
+    
+    "acceleration": 3000,
+    "friction": 0.7,
+    "deadzone": 0.1,
+    
+    "shieldRegenRate": 5,
+    "shieldRegenDelay": 3
   },
   
   "progression": {
@@ -26,7 +34,13 @@
     "bossInterval": 20,
     "eliteChance": 0.15,
     "baseEnemyCount": 5,
-    "enemyCountScale": 0.8
+    "enemyCountScale": 0.8,
+    
+    "scaleMode": "exponential",
+    "scaleBase": 1.08,
+    "scaleLinear": 0.05,
+    "eliteHPMult": 2.5,
+    "bossHPMult": 8
   },
   
   "economy": {
@@ -45,5 +59,24 @@
   "stash": {
     "baseSlots": 56,
     "maxSlots": 200
+  },
+  
+  "effects": {
+    "damageNumbers": {
+      "baseSize": 16,
+      "critSize": 28,
+      "normalColor": "#ffffff",
+      "critColor": "#ffcc00",
+      "bigHitColor": "#ff6600",
+      "floatSpeed": 120,
+      "duration": 0.9,
+      "spread": 30
+    },
+    "screenShake": {
+      "enabled": true,
+      "killIntensity": 2,
+      "critIntensity": 4,
+      "bossIntensity": 10
+    }
   }
 }
