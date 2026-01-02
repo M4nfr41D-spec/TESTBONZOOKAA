@@ -106,25 +106,21 @@ const Game = {
   
   // Main loop
   loop(time) {
-    try {
-      const dt = Math.min((time - this.lastTime) / 1000, 0.05);
-      this.lastTime = time;
-      
-      // Clear
-      this.ctx.fillStyle = '#050810';
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-      
-      // Stars always
-      this.updateStars(dt);
-      this.drawStars();
-      
-      // Game logic
-      if (State.run.active && !State.ui.paused) {
-        this.update(dt);
-        this.draw();
-      }
-    } catch (error) {
-      console.error('❌ Error in game loop:', error);
+    const dt = Math.min((time - this.lastTime) / 1000, 0.05);
+    this.lastTime = time;
+    
+    // Clear
+    this.ctx.fillStyle = '#050810';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    // Stars always
+    this.updateStars(dt);
+    this.drawStars();
+    
+    // Game logic
+    if (State.run.active && !State.ui.paused) {
+      this.update(dt);
+      this.draw();
     }
     
     requestAnimationFrame((t) => this.loop(t));
@@ -183,27 +179,19 @@ const Game = {
   // ========== GAME FLOW ==========
   
   start() {
-    console.log('🎮 Game.start() called');
+    resetRun();
+    State.run.active = true;
+    State.run.wave = 0;
     
-    try {
-      resetRun();
-      State.run.active = true;
-      State.run.wave = 0;
-      
-      Stats.calculate();
-      Stats.initializeHP();
-      
-      resetPlayer(this.canvas.width, this.canvas.height);
-      
-      this.hideModal('startModal');
-      this.nextWave();
-      
-      UI.renderAll();
-      
-      console.log('✅ Game started successfully');
-    } catch (error) {
-      console.error('❌ Error starting game:', error);
-    }
+    Stats.calculate();
+    Stats.initializeHP();
+    
+    resetPlayer(this.canvas.width, this.canvas.height);
+    
+    this.hideModal('startModal');
+    this.nextWave();
+    
+    UI.renderAll();
   },
   
   nextWave() {
@@ -300,7 +288,7 @@ const Game = {
     
     // XP
     const xpProgress = Leveling.getProgress();
-    const xpNeeded = Leveling.xpForLevel(State.meta.level);
+    const xpNeeded = Leveling.getXPForLevel(State.meta.level);
     document.getElementById('xpBar').style.width = (xpProgress * 100) + '%';
     document.getElementById('xpText').textContent = `${State.meta.xp} / ${xpNeeded} XP`;
     
