@@ -11,18 +11,30 @@ export const Player = {
   
   update(dt, canvas) {
     const p = State.player;
+    const cfg = State.data.config?.player || {};
     
     // ========== MOVEMENT (WASD) ==========
     const move = Input.getMovement();
     
-    const targetVX = move.dx * p.speed;
-    const targetVY = move.dy * p.speed;
+    // Config-driven movement (defaults for snappy feel)
+    const accel = cfg.acceleration || 3000;
+    const friction = cfg.friction || 0.75;
+    const deadzone = cfg.deadzone || 0.1;
     
-    // Smooth acceleration
-    const accel = 1200;
-    const smoothing = Math.min(1, accel * dt / p.speed);
-    p.vx += (targetVX - p.vx) * smoothing;
-    p.vy += (targetVY - p.vy) * smoothing;
+    if (Math.abs(move.dx) > deadzone || Math.abs(move.dy) > deadzone) {
+      // Accelerate towards target
+      const targetVX = move.dx * p.speed;
+      const targetVY = move.dy * p.speed;
+      p.vx += (targetVX - p.vx) * Math.min(1, accel * dt / p.speed);
+      p.vy += (targetVY - p.vy) * Math.min(1, accel * dt / p.speed);
+    } else {
+      // Apply friction when no input (quick stop)
+      p.vx *= friction;
+      p.vy *= friction;
+      // Snap to zero if very slow
+      if (Math.abs(p.vx) < 5) p.vx = 0;
+      if (Math.abs(p.vy) < 5) p.vy = 0;
+    }
     
     // Apply velocity
     p.x += p.vx * dt;
