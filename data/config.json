@@ -1,0 +1,49 @@
+{
+  "version": "2.0.0",
+  "name": "BONZOOKAA!",
+  
+  "player": {
+    "baseHP": 100,
+    "baseDamage": 10,
+    "baseSpeed": 300,
+    "baseFireRate": 5,
+    "baseCritChance": 5,
+    "baseCritDamage": 150,
+    "basePickupRadius": 60
+  },
+  
+  "progression": {
+    "baseXP": 100,
+    "xpScale": 1.15,
+    "maxLevel": 100,
+    "skillPerLevel": 1,
+    "statPerLevel": 3
+  },
+  
+  "waves": {
+    "vendorInterval": 10,
+    "vendorStart": 5,
+    "bossInterval": 20,
+    "eliteChance": 0.15,
+    "baseEnemyCount": 5,
+    "enemyCountScale": 0.8
+  },
+  
+  "economy": {
+    "scrapPerKill": 5,
+    "cellsPerKill": 3,
+    "bossScrapMult": 10,
+    "eliteScrapMult": 3
+  },
+  
+  "loot": {
+    "baseDropChance": 0.03,
+    "bossDropChance": 1.0,
+    "eliteDropChance": 0.25
+  },
+  
+  "stash": {
+    "baseSlots": 56,
+    "maxSlots": 200
+  }
+}

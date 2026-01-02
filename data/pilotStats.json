@@ -1,0 +1,44 @@
+{
+  "power": {
+    "name": "Power",
+    "icon": "💪",
+    "color": "#ff4444",
+    "description": "Increases all weapon damage",
+    "effect": { "stat": "damage", "perPoint": 2 }
+  },
+  "vitality": {
+    "name": "Vitality",
+    "icon": "❤️",
+    "color": "#00ff88",
+    "description": "Increases maximum hull HP",
+    "effect": { "stat": "maxHP", "perPoint": 5 }
+  },
+  "agility": {
+    "name": "Agility",
+    "icon": "🏃",
+    "color": "#00ddff",
+    "description": "Increases movement speed",
+    "effect": { "stat": "speed", "perPoint": 3 }
+  },
+  "precision": {
+    "name": "Precision",
+    "icon": "🎯",
+    "color": "#ffaa00",
+    "description": "Increases critical hit chance",
+    "effect": { "stat": "critChance", "perPoint": 0.5 }
+  },
+  "fortitude": {
+    "name": "Fortitude",
+    "icon": "🛡️",
+    "color": "#0088ff",
+    "description": "Increases shield capacity",
+    "effect": { "stat": "shieldCap", "perPoint": 3 }
+  },
+  "luck": {
+    "name": "Luck",
+    "icon": "🍀",
+    "color": "#88ff00",
+    "description": "Increases item drop rate and quality",
+    "effect": { "stat": "luck", "perPoint": 2 }
+  }
+}

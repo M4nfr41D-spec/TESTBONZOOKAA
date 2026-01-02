@@ -1,0 +1,172 @@
+{
+  "offensive": {
+    "name": "Offensive",
+    "icon": "⚔️",
+    "color": "#ff4444",
+    "description": "Increase damage output",
+    "skills": {
+      "weapon_mastery": {
+        "name": "Weapon Mastery",
+        "icon": "🔫",
+        "maxRank": 5,
+        "effect": { "stat": "damage", "perRank": 4 },
+        "description": "+4% Damage per rank",
+        "requires": null
+      },
+      "rapid_fire": {
+        "name": "Rapid Fire",
+        "icon": "⚡",
+        "maxRank": 5,
+        "effect": { "stat": "fireRate", "perRank": 3 },
+        "description": "+3% Fire Rate per rank",
+        "requires": { "skill": "weapon_mastery", "rank": 2 }
+      },
+      "armor_pierce": {
+        "name": "Armor Pierce",
+        "icon": "📍",
+        "maxRank": 3,
+        "effect": { "stat": "piercing", "perRank": 1 },
+        "description": "+1 Pierce per rank",
+        "requires": { "skill": "weapon_mastery", "rank": 3 }
+      },
+      "critical_expert": {
+        "name": "Critical Expert",
+        "icon": "💥",
+        "maxRank": 5,
+        "effect": { "stat": "critChance", "perRank": 2 },
+        "description": "+2% Crit Chance per rank",
+        "requires": { "skill": "rapid_fire", "rank": 3 }
+      },
+      "multishot": {
+        "name": "Multishot",
+        "icon": "🔱",
+        "maxRank": 2,
+        "effect": { "stat": "projectiles", "perRank": 1 },
+        "description": "+1 Projectile per rank",
+        "requires": { "skill": "armor_pierce", "rank": 2 }
+      },
+      "executioner": {
+        "name": "Executioner",
+        "icon": "☠️",
+        "maxRank": 3,
+        "effect": { "stat": "executeDamage", "perRank": 15 },
+        "description": "+15% damage to low HP enemies",
+        "requires": { "skill": "critical_expert", "rank": 3 }
+      }
+    }
+  },
+  
+  "defensive": {
+    "name": "Defensive",
+    "icon": "🛡️",
+    "color": "#00aaff",
+    "description": "Increase survivability",
+    "skills": {
+      "shield_mastery": {
+        "name": "Shield Mastery",
+        "icon": "🛡️",
+        "maxRank": 5,
+        "effect": { "stat": "shieldCap", "perRank": 8 },
+        "description": "+8% Shield per rank",
+        "requires": null
+      },
+      "quick_recovery": {
+        "name": "Quick Recovery",
+        "icon": "🔄",
+        "maxRank": 5,
+        "effect": { "stat": "shieldRegen", "perRank": 5 },
+        "description": "+5% Shield Regen per rank",
+        "requires": { "skill": "shield_mastery", "rank": 2 }
+      },
+      "hull_plating": {
+        "name": "Hull Plating",
+        "icon": "🔩",
+        "maxRank": 5,
+        "effect": { "stat": "maxHP", "perRank": 5 },
+        "description": "+5% HP per rank",
+        "requires": { "skill": "shield_mastery", "rank": 2 }
+      },
+      "regeneration": {
+        "name": "Regeneration",
+        "icon": "💚",
+        "maxRank": 3,
+        "effect": { "stat": "hpRegen", "perRank": 1 },
+        "description": "+1 HP/sec per rank",
+        "requires": { "skill": "hull_plating", "rank": 3 }
+      },
+      "deflection": {
+        "name": "Deflection",
+        "icon": "↩️",
+        "maxRank": 3,
+        "effect": { "stat": "deflectChance", "perRank": 5 },
+        "description": "+5% Deflect per rank",
+        "requires": { "skill": "quick_recovery", "rank": 3 }
+      },
+      "last_stand": {
+        "name": "Last Stand",
+        "icon": "💀",
+        "maxRank": 3,
+        "effect": { "stat": "lastStandDR", "perRank": 10 },
+        "description": "+10% DR when below 30% HP",
+        "requires": { "skill": "regeneration", "rank": 2 }
+      }
+    }
+  },
+  
+  "utility": {
+    "name": "Utility",
+    "icon": "🔧",
+    "color": "#00ff88",
+    "description": "Improve efficiency and drops",
+    "skills": {
+      "scavenger": {
+        "name": "Scavenger",
+        "icon": "🧲",
+        "maxRank": 5,
+        "effect": { "stat": "pickupRadius", "perRank": 10 },
+        "description": "+10% Pickup Radius per rank",
+        "requires": null
+      },
+      "lucky": {
+        "name": "Lucky",
+        "icon": "🍀",
+        "maxRank": 5,
+        "effect": { "stat": "dropRate", "perRank": 3 },
+        "description": "+3% Drop Rate per rank",
+        "requires": { "skill": "scavenger", "rank": 2 }
+      },
+      "speed_boost": {
+        "name": "Speed Boost",
+        "icon": "💨",
+        "maxRank": 5,
+        "effect": { "stat": "speed", "perRank": 4 },
+        "description": "+4% Speed per rank",
+        "requires": { "skill": "scavenger", "rank": 2 }
+      },
+      "treasure_hunter": {
+        "name": "Treasure Hunter",
+        "icon": "💎",
+        "maxRank": 3,
+        "effect": { "stat": "rarityBoost", "perRank": 5 },
+        "description": "+5% Rare+ drops per rank",
+        "requires": { "skill": "lucky", "rank": 3 }
+      },
+      "evasion": {
+        "name": "Evasion",
+        "icon": "🌀",
+        "maxRank": 3,
+        "effect": { "stat": "dodgeChance", "perRank": 5 },
+        "description": "+5% Dodge per rank",
+        "requires": { "skill": "speed_boost", "rank": 3 }
+      },
+      "xp_boost": {
+        "name": "XP Boost",
+        "icon": "📈",
+        "maxRank": 5,
+        "effect": { "stat": "xpBonus", "perRank": 4 },
+        "description": "+4% XP gain per rank",
+        "requires": { "skill": "treasure_hunter", "rank": 2 }
+      }
+    }
+  }
+}

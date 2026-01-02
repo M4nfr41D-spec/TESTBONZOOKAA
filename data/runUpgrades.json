@@ -1,0 +1,82 @@
+{
+  "damage": {
+    "name": "Damage+",
+    "icon": "🔴",
+    "maxTier": 5,
+    "effect": { "stat": "damage", "perTier": 15 },
+    "costs": [30, 60, 120, 240, 500],
+    "description": "+15% Damage per tier"
+  },
+  "fireRate": {
+    "name": "Fire Rate+",
+    "icon": "⚡",
+    "maxTier": 5,
+    "effect": { "stat": "fireRate", "perTier": 12 },
+    "costs": [25, 50, 100, 200, 400],
+    "description": "+12% Fire Rate per tier"
+  },
+  "multishot": {
+    "name": "Multi-Shot",
+    "icon": "🔱",
+    "maxTier": 3,
+    "effect": { "stat": "projectiles", "perTier": 1 },
+    "costs": [80, 200, 500],
+    "description": "+1 Projectile per tier"
+  },
+  "shield": {
+    "name": "Shield+",
+    "icon": "🛡️",
+    "maxTier": 5,
+    "effect": { "stat": "shieldCap", "perTier": 20 },
+    "costs": [35, 70, 140, 280, 560],
+    "description": "+20 Shield per tier"
+  },
+  "regen": {
+    "name": "Regen+",
+    "icon": "💚",
+    "maxTier": 3,
+    "effect": { "stat": "hpRegen", "perTier": 2 },
+    "costs": [50, 120, 300],
+    "description": "+2 HP/sec per tier"
+  },
+  "speed": {
+    "name": "Speed+",
+    "icon": "💨",
+    "maxTier": 3,
+    "effect": { "stat": "speed", "perTier": 10 },
+    "costs": [30, 70, 160],
+    "description": "+10% Speed per tier"
+  },
+  "magnet": {
+    "name": "Magnet+",
+    "icon": "🧲",
+    "maxTier": 3,
+    "effect": { "stat": "pickupRadius", "perTier": 35 },
+    "costs": [20, 50, 120],
+    "description": "+35% Pickup Radius per tier"
+  },
+  "luck": {
+    "name": "Luck+",
+    "icon": "🍀",
+    "maxTier": 3,
+    "effect": { "stat": "dropRate", "perTier": 12 },
+    "costs": [40, 100, 250],
+    "description": "+12% Drop Rate per tier"
+  },
+  "crit": {
+    "name": "Critical+",
+    "icon": "💥",
+    "maxTier": 4,
+    "effect": { "stat": "critChance", "perTier": 6 },
+    "costs": [45, 100, 220, 480],
+    "description": "+6% Crit Chance per tier"
+  },
+  "pierce": {
+    "name": "Pierce+",
+    "icon": "📍",
+    "maxTier": 3,
+    "effect": { "stat": "piercing", "perTier": 1 },
+    "costs": [60, 150, 380],
+    "description": "+1 Pierce per tier"
+  }
+}

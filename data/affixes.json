@@ -1,0 +1,63 @@
+{
+  "prefixes": {
+    "damage": [
+      { "id": "sharp", "name": "Sharp", "stat": "damage", "range": [3, 8], "tiers": ["common", "uncommon"] },
+      { "id": "deadly", "name": "Deadly", "stat": "damage", "range": [8, 15], "tiers": ["uncommon", "rare"] },
+      { "id": "vicious", "name": "Vicious", "stat": "damage", "range": [15, 25], "tiers": ["rare", "epic"] },
+      { "id": "brutal", "name": "Brutal", "stat": "damage", "range": [25, 40], "tiers": ["epic", "legendary"] },
+      { "id": "annihilating", "name": "Annihilating", "stat": "damage", "range": [40, 60], "tiers": ["legendary", "mythic"] }
+    ],
+    "fireRate": [
+      { "id": "quick", "name": "Quick", "stat": "fireRate", "range": [5, 10], "tiers": ["common", "uncommon"] },
+      { "id": "rapid", "name": "Rapid", "stat": "fireRate", "range": [10, 18], "tiers": ["uncommon", "rare"] },
+      { "id": "furious", "name": "Furious", "stat": "fireRate", "range": [18, 28], "tiers": ["rare", "epic"] },
+      { "id": "frenzied", "name": "Frenzied", "stat": "fireRate", "range": [28, 40], "tiers": ["epic", "legendary"] }
+    ],
+    "crit": [
+      { "id": "keen", "name": "Keen", "stat": "critChance", "range": [3, 6], "tiers": ["common", "uncommon", "rare"] },
+      { "id": "precise", "name": "Precise", "stat": "critChance", "range": [6, 10], "tiers": ["rare", "epic"] },
+      { "id": "lethal", "name": "Lethal", "stat": "critChance", "range": [10, 15], "tiers": ["epic", "legendary", "mythic"] }
+    ],
+    "special": [
+      { "id": "vampiric", "name": "Vampiric", "stat": "lifesteal", "range": [2, 5], "tiers": ["rare", "epic", "legendary"] },
+      { "id": "ethereal", "name": "Ethereal", "stat": "piercing", "range": [1, 3], "tiers": ["epic", "legendary", "mythic"] },
+      { "id": "quantum", "name": "Quantum", "stat": "projectiles", "range": [1, 2], "tiers": ["legendary", "mythic"] },
+      { "id": "berserker", "name": "Berserker", "stat": "berserkDamage", "range": [25, 50], "tiers": ["epic", "legendary"] }
+    ],
+    "defense": [
+      { "id": "reinforced", "name": "Reinforced", "stat": "shieldCap", "range": [10, 25], "tiers": ["common", "uncommon", "rare"] },
+      { "id": "fortified", "name": "Fortified", "stat": "shieldCap", "range": [25, 45], "tiers": ["rare", "epic", "legendary"] },
+      { "id": "hardened", "name": "Hardened", "stat": "maxHP", "range": [10, 25], "tiers": ["common", "uncommon", "rare"] },
+      { "id": "stalwart", "name": "Stalwart", "stat": "maxHP", "range": [25, 50], "tiers": ["rare", "epic", "legendary"] }
+    ]
+  },
+  
+  "suffixes": {
+    "defense": [
+      { "id": "of_protection", "name": "of Protection", "stat": "shieldCap", "range": [10, 25], "tiers": ["common", "uncommon"] },
+      { "id": "of_the_fortress", "name": "of the Fortress", "stat": "shieldCap", "range": [25, 50], "tiers": ["rare", "epic"] },
+      { "id": "of_invincibility", "name": "of Invincibility", "stat": "shieldCap", "range": [50, 80], "tiers": ["legendary", "mythic"] }
+    ],
+    "speed": [
+      { "id": "of_swiftness", "name": "of Swiftness", "stat": "speed", "range": [5, 12], "tiers": ["common", "uncommon", "rare"] },
+      { "id": "of_the_wind", "name": "of the Wind", "stat": "speed", "range": [12, 22], "tiers": ["rare", "epic"] },
+      { "id": "of_light", "name": "of Light", "stat": "speed", "range": [22, 35], "tiers": ["epic", "legendary", "mythic"] }
+    ],
+    "luck": [
+      { "id": "of_fortune", "name": "of Fortune", "stat": "luck", "range": [5, 12], "tiers": ["uncommon", "rare", "epic"] },
+      { "id": "of_prosperity", "name": "of Prosperity", "stat": "scrapBonus", "range": [10, 25], "tiers": ["rare", "epic", "legendary"] },
+      { "id": "of_the_collector", "name": "of the Collector", "stat": "dropBonus", "range": [5, 15], "tiers": ["epic", "legendary", "mythic"] }
+    ],
+    "vitality": [
+      { "id": "of_vitality", "name": "of Vitality", "stat": "maxHP", "range": [10, 25], "tiers": ["common", "uncommon", "rare"] },
+      { "id": "of_the_titan", "name": "of the Titan", "stat": "maxHP", "range": [25, 50], "tiers": ["rare", "epic", "legendary"] },
+      { "id": "of_immortality", "name": "of Immortality", "stat": "maxHP", "range": [50, 100], "tiers": ["legendary", "mythic"] }
+    ],
+    "special": [
+      { "id": "of_the_phoenix", "name": "of the Phoenix", "stat": "reviveChance", "range": [10, 25], "tiers": ["legendary", "mythic"] },
+      { "id": "of_devastation", "name": "of Devastation", "stat": "critDamage", "range": [25, 50], "tiers": ["epic", "legendary", "mythic"] },
+      { "id": "of_infinity", "name": "of Infinity", "stat": "energyRegen", "range": [20, 40], "tiers": ["epic", "legendary"] },
+      { "id": "of_the_void", "name": "of the Void", "stat": "voidDamage", "range": [10, 25], "tiers": ["mythic"] }
+    ]
+  }
+}

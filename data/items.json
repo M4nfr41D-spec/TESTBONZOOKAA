@@ -1,0 +1,294 @@
+{
+  "weapons": {
+    "laser_cannon": {
+      "name": "Laser Cannon",
+      "slot": "weapon",
+      "icon": "🔫",
+      "description": "Balanced energy weapon",
+      "stats": {
+        "damage": [8, 12],
+        "fireRate": [6, 8]
+      },
+      "rarities": ["common", "uncommon", "rare", "epic", "legendary"]
+    },
+    "plasma_spreader": {
+      "name": "Plasma Spreader",
+      "slot": "weapon",
+      "icon": "🔥",
+      "description": "Wide-arc plasma bursts",
+      "stats": {
+        "damage": [5, 8],
+        "projectiles": [3, 3]
+      },
+      "rarities": ["uncommon", "rare", "epic", "legendary"]
+    },
+    "railgun": {
+      "name": "Railgun",
+      "slot": "weapon",
+      "icon": "⚡",
+      "description": "Devastating piercing shots",
+      "stats": {
+        "damage": [25, 40],
+        "piercing": [2, 3]
+      },
+      "rarities": ["rare", "epic", "legendary", "mythic"]
+    },
+    "gatling_laser": {
+      "name": "Gatling Laser",
+      "slot": "weapon",
+      "icon": "💥",
+      "description": "Rapid-fire energy barrage",
+      "stats": {
+        "damage": [3, 5],
+        "fireRate": [15, 20]
+      },
+      "rarities": ["uncommon", "rare", "epic", "legendary"]
+    },
+    "nova_emitter": {
+      "name": "Nova Emitter",
+      "slot": "weapon",
+      "icon": "💫",
+      "description": "360° burst attack",
+      "stats": {
+        "damage": [15, 25],
+        "aoeRadius": [80, 120]
+      },
+      "rarities": ["epic", "legendary", "mythic"]
+    }
+  },
+  
+  "secondary": {
+    "missile_pod": {
+      "name": "Missile Pod",
+      "slot": "secondary",
+      "icon": "🚀",
+      "description": "Homing missile launcher",
+      "stats": {
+        "damage": [30, 50],
+        "tracking": [60, 80]
+      },
+      "rarities": ["uncommon", "rare", "epic", "legendary"]
+    },
+    "mine_layer": {
+      "name": "Mine Layer",
+      "slot": "secondary",
+      "icon": "💣",
+      "description": "Deploys proximity mines",
+      "stats": {
+        "damage": [40, 60],
+        "mineCount": [2, 4]
+      },
+      "rarities": ["rare", "epic", "legendary"]
+    }
+  },
+  
+  "shields": {
+    "energy_barrier": {
+      "name": "Energy Barrier",
+      "slot": "shield",
+      "icon": "🛡️",
+      "description": "Standard shield generator",
+      "stats": {
+        "shieldCap": [30, 50],
+        "shieldRegen": [2, 4]
+      },
+      "rarities": ["common", "uncommon", "rare", "epic", "legendary"]
+    },
+    "deflector": {
+      "name": "Deflector Array",
+      "slot": "shield",
+      "icon": "🔰",
+      "description": "Chance to reflect projectiles",
+      "stats": {
+        "shieldCap": [20, 35],
+        "deflectChance": [10, 20]
+      },
+      "rarities": ["rare", "epic", "legendary"]
+    },
+    "phase_shield": {
+      "name": "Phase Shield",
+      "slot": "shield",
+      "icon": "🌀",
+      "description": "Brief invulnerability on break",
+      "stats": {
+        "shieldCap": [25, 40],
+        "phaseTime": [0.5, 1.0]
+      },
+      "rarities": ["epic", "legendary", "mythic"]
+    }
+  },
+  
+  "engines": {
+    "ion_thruster": {
+      "name": "Ion Thruster",
+      "slot": "engine",
+      "icon": "🔹",
+      "description": "Reliable propulsion",
+      "stats": {
+        "speed": [280, 320],
+        "acceleration": [800, 1000]
+      },
+      "rarities": ["common", "uncommon", "rare", "epic"]
+    },
+    "quantum_drive": {
+      "name": "Quantum Drive",
+      "slot": "engine",
+      "icon": "⚡",
+      "description": "Includes dash ability",
+      "stats": {
+        "speed": [320, 380],
+        "dashCharges": [1, 2]
+      },
+      "rarities": ["rare", "epic", "legendary"]
+    },
+    "warp_core": {
+      "name": "Warp Core",
+      "slot": "engine",
+      "icon": "🌟",
+      "description": "Short-range teleport",
+      "stats": {
+        "speed": [300, 350],
+        "warpRange": [100, 150]
+      },
+      "rarities": ["legendary", "mythic"]
+    }
+  },
+  
+  "reactors": {
+    "fusion_core": {
+      "name": "Fusion Core",
+      "slot": "reactor",
+      "icon": "☢️",
+      "description": "Standard power plant",
+      "stats": {
+        "energyCap": [100, 150],
+        "energyRegen": [10, 15]
+      },
+      "rarities": ["common", "uncommon", "rare", "epic"]
+    },
+    "antimatter_cell": {
+      "name": "Antimatter Cell",
+      "slot": "reactor",
+      "icon": "💠",
+      "description": "High-output reactor",
+      "stats": {
+        "energyCap": [150, 220],
+        "energyRegen": [15, 22]
+      },
+      "rarities": ["epic", "legendary", "mythic"]
+    }
+  },
+  
+  "modules": {
+    "damage_amp": {
+      "name": "Damage Amplifier",
+      "slot": "module1",
+      "icon": "🔴",
+      "description": "Increases weapon damage",
+      "stats": {
+        "damageBonus": [5, 15]
+      },
+      "rarities": ["common", "uncommon", "rare", "epic", "legendary"]
+    },
+    "targeting_cpu": {
+      "name": "Targeting CPU",
+      "slot": "module1",
+      "icon": "🎯",
+      "description": "Improves accuracy and crits",
+      "stats": {
+        "critChance": [5, 12],
+        "accuracy": [5, 10]
+      },
+      "rarities": ["uncommon", "rare", "epic", "legendary"]
+    },
+    "scrap_magnet": {
+      "name": "Scrap Magnet",
+      "slot": "module2",
+      "icon": "🧲",
+      "description": "Pulls in nearby pickups",
+      "stats": {
+        "pickupRadius": [30, 60],
+        "scrapBonus": [5, 15]
+      },
+      "rarities": ["common", "uncommon", "rare", "epic"]
+    },
+    "lucky_charm": {
+      "name": "Lucky Charm",
+      "slot": "module3",
+      "icon": "🍀",
+      "description": "Increases drop rates",
+      "stats": {
+        "luck": [5, 15],
+        "dropBonus": [3, 10]
+      },
+      "rarities": ["uncommon", "rare", "epic", "legendary"]
+    },
+    "armor_plating": {
+      "name": "Armor Plating",
+      "slot": "module2",
+      "icon": "🔩",
+      "description": "Increases hull strength",
+      "stats": {
+        "maxHP": [15, 35]
+      },
+      "rarities": ["common", "uncommon", "rare", "epic"]
+    },
+    "vampiric_core": {
+      "name": "Vampiric Core",
+      "slot": "module3",
+      "icon": "🩸",
+      "description": "Steal life from enemies",
+      "stats": {
+        "lifesteal": [2, 6]
+      },
+      "rarities": ["rare", "epic", "legendary", "mythic"]
+    }
+  },
+  
+  "drones": {
+    "attack_drone": {
+      "name": "Attack Drone",
+      "slot": "drone",
+      "icon": "🤖",
+      "description": "Autonomous combat assistant",
+      "stats": {
+        "droneDamage": [5, 10],
+        "droneFireRate": [3, 5]
+      },
+      "rarities": ["uncommon", "rare", "epic", "legendary"]
+    },
+    "repair_drone": {
+      "name": "Repair Drone",
+      "slot": "drone",
+      "icon": "🔧",
+      "description": "Heals hull over time",
+      "stats": {
+        "hpRegen": [1, 3],
+        "repairBurst": [10, 25]
+      },
+      "rarities": ["rare", "epic", "legendary"]
+    },
+    "shield_drone": {
+      "name": "Shield Drone",
+      "slot": "drone",
+      "icon": "🛡️",
+      "description": "Projects protective field",
+      "stats": {
+        "droneShield": [20, 40],
+        "shieldRegen": [2, 5]
+      },
+      "rarities": ["rare", "epic", "legendary"]
+    },
+    "scavenger_drone": {
+      "name": "Scavenger Drone",
+      "slot": "drone",
+      "icon": "🔍",
+      "description": "Auto-collects loot",
+      "stats": {
+        "collectRange": [100, 180],
+        "scrapBonus": [10, 25]
+      },
+      "rarities": ["uncommon", "rare", "epic"]
+    }
+  }
+}
