@@ -5,6 +5,39 @@
 import { State } from './State.js';
 
 export const Particles = {
+  // Generic spawn by type
+  spawn(x, y, type) {
+    switch(type) {
+      case 'muzzle':
+        this.sparks(x, y, '#00ffff', 4);
+        break;
+      case 'playerHit':
+        this.sparks(x, y, '#ff6666', 6);
+        break;
+      case 'explosion':
+        this.explosion(x, y, '#ff4444', 20, 200);
+        break;
+      case 'heal':
+        this.ring(x, y, '#00ff00', 20);
+        break;
+      case 'levelUp':
+        this.explosion(x, y, '#ffff00', 30, 250);
+        this.ring(x, y, '#ffff00', 40);
+        break;
+      default:
+        // Basic particle
+        State.particles.push({
+          x, y,
+          vx: (Math.random() - 0.5) * 50,
+          vy: (Math.random() - 0.5) * 50,
+          life: 0.3,
+          maxLife: 0.3,
+          color: '#ffffff',
+          size: 3
+        });
+    }
+  },
+  
   // Update all particles
   update(dt) {
     for (let i = State.particles.length - 1; i >= 0; i--) {
