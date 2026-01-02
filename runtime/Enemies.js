@@ -15,7 +15,10 @@ export const Enemies = {
       return enemy;
     }
     
-    const waveScale = 1 + State.run.wave * 0.05;
+    const waveScale = this.getWaveScale();
+    const cfg = State.data.config?.waves || {};
+    const eliteMult = cfg.eliteHPMult || 2.5;
+    const bossMult = cfg.bossHPMult || 8;
     
     const enemy = {
       id: 'e_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
@@ -24,8 +27,8 @@ export const Enemies = {
       y: y,
       vx: 0,
       vy: 0,
-      hp: enemyData.hp * waveScale * (isElite ? 2 : 1) * (isBoss ? 5 : 1),
-      maxHP: enemyData.hp * waveScale * (isElite ? 2 : 1) * (isBoss ? 5 : 1),
+      hp: enemyData.hp * waveScale * (isElite ? eliteMult : 1) * (isBoss ? bossMult : 1),
+      maxHP: enemyData.hp * waveScale * (isElite ? eliteMult : 1) * (isBoss ? bossMult : 1),
       damage: enemyData.damage * waveScale,
       speed: enemyData.speed,
       score: enemyData.score * (isElite ? 3 : 1) * (isBoss ? 10 : 1),
@@ -79,6 +82,21 @@ export const Enemies = {
       }
     }
     return null;
+  },
+  
+  // Calculate wave scaling factor (config-driven)
+  getWaveScale() {
+    const cfg = State.data.config?.waves || {};
+    const wave = State.run.wave;
+    const scaleMode = cfg.scaleMode || 'exponential';
+    const scaleBase = cfg.scaleBase || 1.08;
+    const scaleLinear = cfg.scaleLinear || 0.05;
+    
+    if (scaleMode === 'exponential') {
+      return Math.pow(scaleBase, wave - 1);
+    } else {
+      return 1 + wave * scaleLinear;
+    }
   },
   
   // Spawn a wave
