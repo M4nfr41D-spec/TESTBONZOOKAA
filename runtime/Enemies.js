@@ -39,8 +39,8 @@ export const Enemies = {
       isBoss: isBoss,
       pattern: enemyData.pattern,
       patternTime: 0,
-      shootTimer: 2 + Math.random() * 2,
-      shootInterval: isBoss ? 1.0 : (isElite ? 1.5 : 3),
+      shootTimer: 1 + Math.random() * 2,
+      shootInterval: enemyData.shootInterval || (isBoss ? 0.6 : (isElite ? 1.2 : 2.5)),
       dead: false
     };
     
