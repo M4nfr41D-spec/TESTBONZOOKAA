@@ -101,17 +101,47 @@ export const Bullets = {
   
   // Spawn floating damage number
   spawnDamageNumber(x, y, damage, isCrit) {
+    const cfg = State.data.config?.effects?.damageNumbers || {};
+    
+    // Config values with Diablo-style defaults
+    const baseSize = cfg.baseSize || 16;
+    const critSize = cfg.critSize || 28;
+    const normalColor = cfg.normalColor || '#ffffff';
+    const critColor = cfg.critColor || '#ffcc00';
+    const bigHitColor = cfg.bigHitColor || '#ff6600';
+    const floatSpeed = cfg.floatSpeed || 120;
+    const duration = cfg.duration || 0.9;
+    const spread = cfg.spread || 30;
+    
+    // Big hit threshold (relative to player damage)
+    const bigHitThreshold = State.player.damage * 3;
+    const isBigHit = damage >= bigHitThreshold;
+    
+    let color = normalColor;
+    let size = baseSize;
+    
+    if (isCrit) {
+      color = critColor;
+      size = critSize;
+    }
+    if (isBigHit) {
+      color = bigHitColor;
+      size = critSize + 4;
+    }
+    
     State.particles.push({
-      x: x + (Math.random() - 0.5) * 20,
+      x: x + (Math.random() - 0.5) * spread,
       y: y,
-      vx: (Math.random() - 0.5) * 30,
-      vy: -80,
-      life: 0.7,
-      maxLife: 0.7,
+      vx: (Math.random() - 0.5) * 50,
+      vy: -floatSpeed,
+      life: duration,
+      maxLife: duration,
       text: Math.round(damage).toString(),
       isText: true,
-      color: isCrit ? '#ffff00' : '#ffffff',
-      size: isCrit ? 18 : 14
+      color: color,
+      size: size,
+      isCrit: isCrit,
+      scale: isCrit ? 1.5 : 1.0  // For punch animation
     });
   },
   
@@ -233,11 +263,3 @@ export const Bullets = {
 };
 
 export default Bullets;
-
-
-
-
-
-
-
-
