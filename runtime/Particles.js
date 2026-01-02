@@ -78,11 +78,30 @@ export const Particles = {
       
       if (p.isText) {
         // Text particle (damage numbers, pickup text)
-        ctx.font = `bold ${p.size}px 'Orbitron', monospace`;
+        // Punch animation: scale up then down
+        let scale = 1.0;
+        if (p.scale && p.scale > 1) {
+          const progress = 1 - (p.life / p.maxLife);
+          if (progress < 0.15) {
+            // Scale up quickly
+            scale = 1 + (p.scale - 1) * (progress / 0.15);
+          } else {
+            // Scale back down
+            scale = p.scale - (p.scale - 1) * ((progress - 0.15) / 0.85);
+          }
+        }
+        
+        const fontSize = Math.round(p.size * scale);
+        ctx.font = `bold ${fontSize}px 'Orbitron', monospace`;
         ctx.textAlign = 'center';
         ctx.fillStyle = p.color;
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = 5;
+        ctx.shadowBlur = p.isCrit ? 15 : 5;
+        
+        // Outline for better readability
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 3;
+        ctx.strokeText(p.text, p.x, p.y);
         ctx.fillText(p.text, p.x, p.y);
         ctx.shadowBlur = 0;
       } else {
