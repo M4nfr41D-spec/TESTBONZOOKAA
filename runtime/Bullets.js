@@ -7,34 +7,6 @@ import { Enemies } from './Enemies.js';
 import { Player } from './Player.js';
 
 export const Bullets = {
-  // Spawn a new bullet
-  spawn(config) {
-    State.bullets.push({
-      x: config.x,
-      y: config.y,
-      vx: config.vx || 0,
-      vy: config.vy || -500,
-      damage: config.damage || 10,
-      size: config.size || 4,
-      pierce: config.piercing || 0,
-      hits: 0,
-      isCrit: config.crit || false,
-      isPlayer: config.isPlayer !== false
-    });
-  },
-  
-  // Spawn enemy bullet
-  spawnEnemy(config) {
-    State.enemyBullets.push({
-      x: config.x,
-      y: config.y,
-      vx: config.vx || 0,
-      vy: config.vy || 200,
-      damage: config.damage || 10,
-      size: config.size || 6
-    });
-  },
-  
   // Update all bullets
   update(dt, canvas) {
     // Player bullets
@@ -101,47 +73,17 @@ export const Bullets = {
   
   // Spawn floating damage number
   spawnDamageNumber(x, y, damage, isCrit) {
-    const cfg = State.data.config?.effects?.damageNumbers || {};
-    
-    // Config values with Diablo-style defaults
-    const baseSize = cfg.baseSize || 16;
-    const critSize = cfg.critSize || 28;
-    const normalColor = cfg.normalColor || '#ffffff';
-    const critColor = cfg.critColor || '#ffcc00';
-    const bigHitColor = cfg.bigHitColor || '#ff6600';
-    const floatSpeed = cfg.floatSpeed || 120;
-    const duration = cfg.duration || 0.9;
-    const spread = cfg.spread || 30;
-    
-    // Big hit threshold (relative to player damage)
-    const bigHitThreshold = State.player.damage * 3;
-    const isBigHit = damage >= bigHitThreshold;
-    
-    let color = normalColor;
-    let size = baseSize;
-    
-    if (isCrit) {
-      color = critColor;
-      size = critSize;
-    }
-    if (isBigHit) {
-      color = bigHitColor;
-      size = critSize + 4;
-    }
-    
     State.particles.push({
-      x: x + (Math.random() - 0.5) * spread,
+      x: x + (Math.random() - 0.5) * 20,
       y: y,
-      vx: (Math.random() - 0.5) * 50,
-      vy: -floatSpeed,
-      life: duration,
-      maxLife: duration,
+      vx: (Math.random() - 0.5) * 30,
+      vy: -80,
+      life: 0.7,
+      maxLife: 0.7,
       text: Math.round(damage).toString(),
       isText: true,
-      color: color,
-      size: size,
-      isCrit: isCrit,
-      scale: isCrit ? 1.5 : 1.0  // For punch animation
+      color: isCrit ? '#ffff00' : '#ffffff',
+      size: isCrit ? 18 : 14
     });
   },
   

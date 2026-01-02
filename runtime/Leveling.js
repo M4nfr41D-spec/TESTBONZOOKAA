@@ -14,6 +14,11 @@ export const Leveling = {
     const scale = getConfig('progression.xpScale', 1.15);
     return Math.floor(baseXP * Math.pow(scale, level - 1));
   },
+  // Backward-compatible alias (used by main.js)
+  getXPForLevel(level) {
+    return this.xpForLevel(level);
+  },
+
   
   // Add XP and check for level up
   addXP(amount) {

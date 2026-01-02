@@ -5,39 +5,6 @@
 import { State } from './State.js';
 
 export const Particles = {
-  // Generic spawn by type
-  spawn(x, y, type) {
-    switch(type) {
-      case 'muzzle':
-        this.sparks(x, y, '#00ffff', 4);
-        break;
-      case 'playerHit':
-        this.sparks(x, y, '#ff6666', 6);
-        break;
-      case 'explosion':
-        this.explosion(x, y, '#ff4444', 20, 200);
-        break;
-      case 'heal':
-        this.ring(x, y, '#00ff00', 20);
-        break;
-      case 'levelUp':
-        this.explosion(x, y, '#ffff00', 30, 250);
-        this.ring(x, y, '#ffff00', 40);
-        break;
-      default:
-        // Basic particle
-        State.particles.push({
-          x, y,
-          vx: (Math.random() - 0.5) * 50,
-          vy: (Math.random() - 0.5) * 50,
-          life: 0.3,
-          maxLife: 0.3,
-          color: '#ffffff',
-          size: 3
-        });
-    }
-  },
-  
   // Update all particles
   update(dt) {
     for (let i = State.particles.length - 1; i >= 0; i--) {
@@ -78,30 +45,11 @@ export const Particles = {
       
       if (p.isText) {
         // Text particle (damage numbers, pickup text)
-        // Punch animation: scale up then down
-        let scale = 1.0;
-        if (p.scale && p.scale > 1) {
-          const progress = 1 - (p.life / p.maxLife);
-          if (progress < 0.15) {
-            // Scale up quickly
-            scale = 1 + (p.scale - 1) * (progress / 0.15);
-          } else {
-            // Scale back down
-            scale = p.scale - (p.scale - 1) * ((progress - 0.15) / 0.85);
-          }
-        }
-        
-        const fontSize = Math.round(p.size * scale);
-        ctx.font = `bold ${fontSize}px 'Orbitron', monospace`;
+        ctx.font = `bold ${p.size}px 'Orbitron', monospace`;
         ctx.textAlign = 'center';
         ctx.fillStyle = p.color;
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = p.isCrit ? 15 : 5;
-        
-        // Outline for better readability
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 3;
-        ctx.strokeText(p.text, p.x, p.y);
+        ctx.shadowBlur = 5;
         ctx.fillText(p.text, p.x, p.y);
         ctx.shadowBlur = 0;
       } else {

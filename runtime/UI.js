@@ -85,7 +85,6 @@ export const UI = {
         <div class="stash-slot filled ${isEquipped ? 'equipped' : ''}"
              style="--rarity-color: ${rarityColor}"
              onclick="UI.onStashItemClick('${item.id}')"
-             oncontextmenu="UI.sellItem(event, '${item.id}')"
              onmouseenter="UI.showItemTooltip(event, '${item.id}')"
              onmouseleave="UI.hideTooltip()">
           ${item.icon}
@@ -264,7 +263,7 @@ export const UI = {
     if (!item) return;
     
     const rarities = State.data.rarities;
-    const rarityData = rarities?.[item.rarity];
+    const rarityData = rarities[item.rarity];
     const isEquipped = Object.values(State.meta.equipment).includes(itemId);
     
     let statsHtml = '';
@@ -279,15 +278,13 @@ export const UI = {
       <div class="tooltip-header">
         <span class="tooltip-icon">${item.icon}</span>
         <div>
-          <div class="tooltip-name" style="color:${rarityData?.color || '#fff'}">${item.name}</div>
+          <div class="tooltip-name" style="color:${rarityData?.color}">${item.name}</div>
           <div class="tooltip-type">${item.slot} • Level ${item.level}</div>
         </div>
       </div>
-      <div class="tooltip-body">
-        ${statsHtml}
-        <div class="tooltip-value">Sell: ${item.value} 💰</div>
-        <div class="tooltip-hint">${isEquipped ? 'Click to unequip' : 'Click to equip'}</div>
-      </div>
+      <div class="tooltip-stats">${statsHtml}</div>
+      <div class="tooltip-value">Sell: ${item.value} 💰</div>
+      <div class="tooltip-hint">${isEquipped ? 'Right-click to unequip' : 'Click to equip • Right-click to sell'}</div>
     `;
     
     this.showTooltip(event, html, rarityData?.color);
@@ -295,12 +292,9 @@ export const UI = {
   
   showSlotTooltip(event, slotId) {
     const slots = State.data.slots;
-    if (!slots) return;
-    
     const equipment = State.meta.equipment;
     const stash = State.meta.stash;
     const slotDef = slots[slotId];
-    if (!slotDef) return;
     
     const equippedId = equipment[slotId];
     const item = equippedId ? stash.find(i => i.id === equippedId) : null;
@@ -316,9 +310,7 @@ export const UI = {
             <div class="tooltip-type">Empty Slot</div>
           </div>
         </div>
-        <div class="tooltip-body">
-          <div class="tooltip-hint">Click to see available items</div>
-        </div>
+        <div class="tooltip-hint">Click to see available items</div>
       `;
       this.showTooltip(event, html);
     }
@@ -327,12 +319,8 @@ export const UI = {
   showTooltip(event, html, color = null) {
     if (!this.tooltipEl) return;
     
-    // Wrap in tooltip-panel for proper styling
-    this.tooltipEl.innerHTML = `
-      <div class="tooltip-panel" style="--rarity-color: ${color || 'var(--cyan)'}">
-        ${html}
-      </div>
-    `;
+    this.tooltipEl.innerHTML = html;
+    this.tooltipEl.style.setProperty('--rarity-color', color || 'var(--accent)');
     this.tooltipEl.classList.add('visible');
     
     // Position
@@ -394,59 +382,6 @@ export const UI = {
     Stats.calculate();
     Save.save();
     this.renderAll();
-  },
-  
-  // Right-click to sell item
-  sellItem(event, itemId) {
-    event.preventDefault(); // Prevent context menu
-    
-    const item = State.meta.stash.find(i => i.id === itemId);
-    if (!item) return;
-    
-    // Can't sell equipped items directly
-    const isEquipped = Object.values(State.meta.equipment).includes(itemId);
-    if (isEquipped) {
-      this.showFloatingText(event.clientX, event.clientY, 'Unequip first!', '#ff4444');
-      return;
-    }
-    
-    // Sell it!
-    const value = Items.sell(itemId);
-    
-    // Show feedback
-    this.showFloatingText(event.clientX, event.clientY, `+${value} 💰`, '#ffcc00');
-    
-    Save.save();
-    this.renderAll();
-    this.renderScrap();
-  },
-  
-  // Show floating text feedback
-  showFloatingText(x, y, text, color) {
-    const el = document.createElement('div');
-    el.className = 'floating-text';
-    el.style.cssText = `
-      position: fixed;
-      left: ${x}px;
-      top: ${y}px;
-      color: ${color};
-      font-family: 'Orbitron', monospace;
-      font-size: 18px;
-      font-weight: bold;
-      text-shadow: 0 0 10px ${color};
-      pointer-events: none;
-      z-index: 9999;
-      animation: floatUp 1s ease-out forwards;
-    `;
-    el.textContent = text;
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 1000);
-  },
-  
-  // Update scrap display
-  renderScrap() {
-    const el = document.getElementById('scrapAmount');
-    if (el) el.textContent = State.meta.scrap || 0;
   },
   
   allocateStat(statId) {
