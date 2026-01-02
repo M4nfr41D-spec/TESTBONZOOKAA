@@ -3,46 +3,50 @@
     "grunt": {
       "name": "Grunt",
       "icon": "👾",
-      "hp": 15,
-      "damage": 5,
-      "speed": 80,
+      "hp": 40,
+      "damage": 8,
+      "speed": 70,
       "score": 10,
       "xp": 5,
       "pattern": "straight",
-      "color": "#44aa44"
+      "color": "#44aa44",
+      "shootInterval": 2.5
     },
     "scout": {
       "name": "Scout",
       "icon": "🛸",
-      "hp": 10,
-      "damage": 3,
-      "speed": 120,
+      "hp": 25,
+      "damage": 5,
+      "speed": 110,
       "score": 15,
       "xp": 7,
       "pattern": "zigzag",
-      "color": "#44aaff"
+      "color": "#44aaff",
+      "shootInterval": 2.0
     },
     "diver": {
       "name": "Diver",
       "icon": "🔻",
-      "hp": 20,
-      "damage": 8,
-      "speed": 150,
+      "hp": 35,
+      "damage": 12,
+      "speed": 140,
       "score": 20,
       "xp": 10,
       "pattern": "dive",
-      "color": "#ff4444"
+      "color": "#ff4444",
+      "shootInterval": 1.8
     },
     "tank": {
       "name": "Tank",
       "icon": "🔷",
-      "hp": 50,
-      "damage": 10,
-      "speed": 40,
+      "hp": 100,
+      "damage": 15,
+      "speed": 35,
       "score": 30,
       "xp": 15,
       "pattern": "straight",
-      "color": "#888888"
+      "color": "#888888",
+      "shootInterval": 1.5
     }
   },
   
@@ -50,37 +54,40 @@
     "commander": {
       "name": "Commander",
       "icon": "⭐",
-      "hp": 100,
-      "damage": 15,
-      "speed": 60,
+      "hp": 150,
+      "damage": 20,
+      "speed": 50,
       "score": 100,
       "xp": 50,
       "pattern": "command",
       "color": "#ffaa00",
+      "shootInterval": 1.2,
       "abilities": ["summon", "shield"]
     },
     "berserker": {
       "name": "Berserker",
       "icon": "💢",
-      "hp": 80,
-      "damage": 25,
-      "speed": 100,
+      "hp": 120,
+      "damage": 30,
+      "speed": 90,
       "score": 120,
       "xp": 60,
       "pattern": "charge",
       "color": "#ff2222",
+      "shootInterval": 0.8,
       "abilities": ["enrage"]
     },
     "sniper": {
       "name": "Sniper",
       "icon": "🎯",
-      "hp": 40,
-      "damage": 30,
-      "speed": 30,
+      "hp": 60,
+      "damage": 40,
+      "speed": 25,
       "score": 80,
       "xp": 40,
       "pattern": "strafe",
       "color": "#aa44ff",
+      "shootInterval": 2.5,
       "abilities": ["aimShot"]
     }
   },
@@ -89,39 +96,42 @@
     "sentinel": {
       "name": "Sentinel Alpha",
       "icon": "👑",
-      "hp": 500,
-      "damage": 20,
-      "speed": 40,
+      "hp": 800,
+      "damage": 25,
+      "speed": 35,
       "score": 500,
       "xp": 200,
       "pattern": "boss_sentinel",
       "color": "#ff8800",
+      "shootInterval": 0.6,
       "phases": 3,
       "abilities": ["laser_sweep", "spawn_adds", "shield_phase"]
     },
     "collector": {
       "name": "The Collector",
       "icon": "🕷️",
-      "hp": 800,
-      "damage": 25,
-      "speed": 50,
+      "hp": 1200,
+      "damage": 30,
+      "speed": 45,
       "score": 800,
       "xp": 350,
       "pattern": "boss_collector",
       "color": "#aa00ff",
+      "shootInterval": 0.5,
       "phases": 4,
       "abilities": ["tractor_beam", "drone_swarm", "teleport"]
     },
     "harbinger": {
       "name": "Harbinger",
       "icon": "💀",
-      "hp": 1200,
-      "damage": 35,
-      "speed": 60,
+      "hp": 2000,
+      "damage": 45,
+      "speed": 55,
       "score": 1200,
       "xp": 500,
       "pattern": "boss_harbinger",
       "color": "#ff0044",
+      "shootInterval": 0.4,
       "phases": 5,
       "abilities": ["void_beam", "meteor_shower", "time_slow", "rage_mode"]
     }
@@ -176,27 +186,27 @@
   "waveCompositions": {
     "1-5": {
       "pool": ["grunt"],
-      "count": [5, 8],
+      "count": [4, 6],
       "eliteChance": 0
     },
     "6-10": {
       "pool": ["grunt", "scout"],
-      "count": [6, 10],
+      "count": [5, 8],
       "eliteChance": 0.05
     },
     "11-20": {
       "pool": ["grunt", "scout", "diver"],
-      "count": [8, 12],
+      "count": [6, 10],
       "eliteChance": 0.10
     },
     "21-30": {
       "pool": ["grunt", "scout", "diver", "tank"],
-      "count": [10, 15],
+      "count": [8, 12],
       "eliteChance": 0.15
     },
     "31+": {
       "pool": ["scout", "diver", "tank"],
-      "count": [12, 18],
+      "count": [10, 15],
       "eliteChance": 0.20
     }
   }

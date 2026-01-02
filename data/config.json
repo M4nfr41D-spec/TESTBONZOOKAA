@@ -1,19 +1,19 @@
 {
-  "version": "2.1.0",
+  "version": "2.2.0",
   "name": "BONZOOKAA!",
   
   "player": {
     "baseHP": 100,
-    "baseDamage": 10,
+    "baseDamage": 6,
     "baseSpeed": 320,
-    "baseFireRate": 5,
+    "baseFireRate": 3.5,
     "baseCritChance": 5,
     "baseCritDamage": 150,
     "basePickupRadius": 60,
     "bulletSpeed": 800,
     
     "acceleration": 3000,
-    "friction": 0.7,
+    "friction": 0.65,
     "deadzone": 0.1,
     
     "shieldRegenRate": 5,
@@ -29,16 +29,16 @@
   },
   
   "waves": {
-    "vendorInterval": 10,
-    "vendorStart": 5,
-    "bossInterval": 20,
-    "eliteChance": 0.15,
-    "baseEnemyCount": 5,
-    "enemyCountScale": 0.8,
+    "vendorInterval": 5,
+    "vendorStart": 3,
+    "bossInterval": 10,
+    "eliteChance": 0.12,
+    "baseEnemyCount": 4,
+    "enemyCountScale": 0.6,
     
     "scaleMode": "exponential",
-    "scaleBase": 1.08,
-    "scaleLinear": 0.05,
+    "scaleBase": 1.12,
+    "scaleLinear": 0.08,
     "eliteHPMult": 2.5,
     "bossHPMult": 8
   },
@@ -51,9 +51,9 @@
   },
   
   "loot": {
-    "baseDropChance": 0.03,
+    "baseDropChance": 0.05,
     "bossDropChance": 1.0,
-    "eliteDropChance": 0.25
+    "eliteDropChance": 0.30
   },
   
   "stash": {
