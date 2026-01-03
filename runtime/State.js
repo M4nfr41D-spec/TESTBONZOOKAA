@@ -30,7 +30,22 @@ export const State = {
     highestWave: 0,
     totalRuns: 0,
     totalKills: 0,
-    totalPlaytime: 0
+    totalPlaytime: 0,
+
+    // ====== META MAP (Node-to-Node) ======
+    map: {
+      version: 1,
+      acts: [],                // generated on first boot (MapMeta.init)
+      unlockedActs: ["ACT_01"],
+      unlockedNodes: {},       // { nodeId: true }
+      clearedNodes: {},        // { nodeId: true }
+      fastTravel: {},          // { nodeId: true }
+      current: {
+        actId: "ACT_01",
+        clusterId: "ACT_01_C1",
+        nodeId: "ACT_01_C1_N0"
+      }
+    }
   },
   
   // Current run state (reset each run)
@@ -91,6 +106,7 @@ export const State = {
   
   // Game objects
   bullets: [],
+  enemyBullets: [],
   enemies: [],
   pickups: [],
   particles: [],
@@ -115,6 +131,7 @@ export function resetRun() {
     stats: { kills: 0, damageDealt: 0, damageTaken: 0, timeElapsed: 0 }
   };
   State.bullets = [];
+  State.enemyBullets = [];
   State.enemies = [];
   State.pickups = [];
   State.particles = [];
@@ -129,14 +146,6 @@ export function resetPlayer(canvasW, canvasH) {
   State.player.angle = -Math.PI / 2; // Point up
   State.player.fireCooldown = 0;
   State.player.shieldRegenDelay = 0;
-}
-
-// Deep clone for serializable meta state
-export function cloneState(obj) {
-  // Prefer native structuredClone when available
-  if (typeof structuredClone === 'function') return structuredClone(obj);
-  // Fallback: JSON clone (meta is intended to be serializable)
-  return JSON.parse(JSON.stringify(obj));
 }
 
 export default State;

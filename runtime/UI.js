@@ -263,7 +263,7 @@ export const UI = {
     if (!item) return;
     
     const rarities = State.data.rarities;
-    const rarityData = rarities[item.rarity];
+    const rarityData = rarities?.[item.rarity];
     const isEquipped = Object.values(State.meta.equipment).includes(itemId);
     
     let statsHtml = '';
@@ -278,13 +278,15 @@ export const UI = {
       <div class="tooltip-header">
         <span class="tooltip-icon">${item.icon}</span>
         <div>
-          <div class="tooltip-name" style="color:${rarityData?.color}">${item.name}</div>
+          <div class="tooltip-name" style="color:${rarityData?.color || '#fff'}">${item.name}</div>
           <div class="tooltip-type">${item.slot} • Level ${item.level}</div>
         </div>
       </div>
-      <div class="tooltip-stats">${statsHtml}</div>
-      <div class="tooltip-value">Sell: ${item.value} 💰</div>
-      <div class="tooltip-hint">${isEquipped ? 'Right-click to unequip' : 'Click to equip • Right-click to sell'}</div>
+      <div class="tooltip-body">
+        ${statsHtml}
+        <div class="tooltip-value">Sell: ${item.value} 💰</div>
+        <div class="tooltip-hint">${isEquipped ? 'Click to unequip' : 'Click to equip'}</div>
+      </div>
     `;
     
     this.showTooltip(event, html, rarityData?.color);
@@ -292,9 +294,12 @@ export const UI = {
   
   showSlotTooltip(event, slotId) {
     const slots = State.data.slots;
+    if (!slots) return;
+    
     const equipment = State.meta.equipment;
     const stash = State.meta.stash;
     const slotDef = slots[slotId];
+    if (!slotDef) return;
     
     const equippedId = equipment[slotId];
     const item = equippedId ? stash.find(i => i.id === equippedId) : null;
@@ -310,7 +315,9 @@ export const UI = {
             <div class="tooltip-type">Empty Slot</div>
           </div>
         </div>
-        <div class="tooltip-hint">Click to see available items</div>
+        <div class="tooltip-body">
+          <div class="tooltip-hint">Click to see available items</div>
+        </div>
       `;
       this.showTooltip(event, html);
     }
@@ -319,8 +326,12 @@ export const UI = {
   showTooltip(event, html, color = null) {
     if (!this.tooltipEl) return;
     
-    this.tooltipEl.innerHTML = html;
-    this.tooltipEl.style.setProperty('--rarity-color', color || 'var(--accent)');
+    // Wrap in tooltip-panel for proper styling
+    this.tooltipEl.innerHTML = `
+      <div class="tooltip-panel" style="--rarity-color: ${color || 'var(--cyan)'}">
+        ${html}
+      </div>
+    `;
     this.tooltipEl.classList.add('visible');
     
     // Position
