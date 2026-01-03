@@ -846,7 +846,17 @@ html, body {
           <div class="modal-stat"><span class="label">Best Wave</span><span class="value purple" id="startWave">0</span></div>
           <div class="modal-stat"><span class="label">Total Runs</span><span class="value" id="startRuns">0</span></div>
         </div>
-        <button class="btn primary" onclick="Game.start()">START RUN</button>
+        
+        <div class="glow-divider"></div>
+        <div class="node-block">
+          <div class="node-title">Current Node</div>
+          <div class="node-row"><span class="label">Node</span><span class="value" id="currentNodeLabel">—</span></div>
+          <div class="node-row"><span class="label">Tier</span><span class="value" id="currentNodeTier">—</span></div>
+          <div class="node-row"><span class="label">Type</span><span class="value" id="currentNodeType">—</span></div>
+          <div class="node-row"><span class="label">Mods</span><span class="value" id="currentNodeMods">—</span></div>
+          <div class="node-choices" id="nodeChoices"></div>
+        </div>
+<button class="btn primary" id="startRunBtn" onclick="Game.start()">START RUN</button>
         <br><br>
         <button class="btn small" onclick="Game.debugAddItems()">+Items</button>
         <button class="btn small" onclick="Game.debugAddResources()">+Resources</button>

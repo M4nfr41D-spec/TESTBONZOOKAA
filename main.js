@@ -15,7 +15,6 @@ import { Pickups } from './runtime/Pickups.js';
 import { Particles } from './runtime/Particles.js';
 import { Input } from './runtime/Input.js';
 import { UI } from './runtime/UI.js';
-import { MapMeta } from './runtime/MapMeta.js';
 
 // ============================================================
 // GAME CONTROLLER
@@ -42,11 +41,7 @@ const Game = {
     // Load save
     Save.load();
     
-    
-
-// Init persistent map layer (acts/clusters/nodes)
-try { MapMeta.init(); } catch (e) { console.warn("MapMeta init failed", e); }
-// Initialize systems
+    // Initialize systems
     Input.init(this.canvas);
     UI.init();
     
@@ -86,8 +81,7 @@ try { MapMeta.init(); } catch (e) { console.warn("MapMeta init failed", e); }
         y: Math.random() * this.canvas.height,
         size: Math.random() * 2 + 0.5,
         speed: Math.random() * 40 + 15,
-        brightness: Math.random() * 0.5 + 0.3,
-        parallax: Math.random() * 0.18 + 0.07
+        brightness: Math.random() * 0.5 + 0.3
       });
     }
   },
@@ -149,6 +143,19 @@ try { MapMeta.init(); } catch (e) { console.warn("MapMeta init failed", e); }
     Enemies.update(dt, this.canvas);
     Bullets.update(dt, this.canvas);
     Pickups.update(dt, this.canvas);
+    
+    // Portal exit handling (boss cleared -> return to base)
+    if (State.run.portalTriggered) {
+      State.run.portalTriggered = false;
+      const nodeId = State.run.pendingNodeClear || State.run.nodeId;
+      if (nodeId) {
+        try { MapMeta.markCleared(nodeId); } catch (e) { console.error(e); }
+      }
+      try { Save.save(); } catch (e) { console.error(e); }
+      this.showModal('startModal');
+      this.updateStartModal();
+      return; // stop further updates this frame
+    }
     Particles.update(dt);
     
     // Wave complete
@@ -168,29 +175,14 @@ try { MapMeta.init(); } catch (e) { console.warn("MapMeta init failed", e); }
   },
   
   updateStars(dt) {
-    // Player-tied parallax (removes forced "scroll map" feeling)
-    // Stars move opposite to player delta; tiny ambient drift keeps space alive.
-    const p = State.player;
-    const prev = this._prevP || { x: p.x, y: p.y };
-    const dx = p.x - prev.x;
-    const dy = p.y - prev.y;
-    this._prevP = { x: p.x, y: p.y };
-
-    const ambient = 6; // px/sec
     for (const s of this.stars) {
-      const par = s.parallax ?? 0.15; // 0.08..0.25 typical
-      s.x -= dx * par;
-      s.y -= dy * par;
-      s.y += ambient * dt * par;
-
-      // Wrap
-      if (s.x < 0) s.x += this.canvas.width;
-      if (s.x > this.canvas.width) s.x -= this.canvas.width;
-      if (s.y < 0) s.y += this.canvas.height;
-      if (s.y > this.canvas.height) s.y -= this.canvas.height;
+      s.y += s.speed * dt;
+      if (s.y > this.canvas.height) {
+        s.y = 0;
+        s.x = Math.random() * this.canvas.width;
+      }
     }
   },
-
   
   drawStars() {
     for (const s of this.stars) {
