@@ -41,11 +41,12 @@ const Game = {
     
     // Load save
     Save.load();
-
-    // Init persistent map layer (acts/clusters/nodes)
-    try { MapMeta.init(); } catch (e) { console.error('MapMeta.init failed', e); }
     
-    // Initialize systems
+    
+
+// Init persistent map layer (acts/clusters/nodes)
+try { MapMeta.init(); } catch (e) { console.warn("MapMeta init failed", e); }
+// Initialize systems
     Input.init(this.canvas);
     UI.init();
     
@@ -85,7 +86,8 @@ const Game = {
         y: Math.random() * this.canvas.height,
         size: Math.random() * 2 + 0.5,
         speed: Math.random() * 40 + 15,
-        brightness: Math.random() * 0.5 + 0.3
+        brightness: Math.random() * 0.5 + 0.3,
+        parallax: Math.random() * 0.18 + 0.07
       });
     }
   },
@@ -166,14 +168,29 @@ const Game = {
   },
   
   updateStars(dt) {
+    // Player-tied parallax (removes forced "scroll map" feeling)
+    // Stars move opposite to player delta; tiny ambient drift keeps space alive.
+    const p = State.player;
+    const prev = this._prevP || { x: p.x, y: p.y };
+    const dx = p.x - prev.x;
+    const dy = p.y - prev.y;
+    this._prevP = { x: p.x, y: p.y };
+
+    const ambient = 6; // px/sec
     for (const s of this.stars) {
-      s.y += s.speed * dt;
-      if (s.y > this.canvas.height) {
-        s.y = 0;
-        s.x = Math.random() * this.canvas.width;
-      }
+      const par = s.parallax ?? 0.15; // 0.08..0.25 typical
+      s.x -= dx * par;
+      s.y -= dy * par;
+      s.y += ambient * dt * par;
+
+      // Wrap
+      if (s.x < 0) s.x += this.canvas.width;
+      if (s.x > this.canvas.width) s.x -= this.canvas.width;
+      if (s.y < 0) s.y += this.canvas.height;
+      if (s.y > this.canvas.height) s.y -= this.canvas.height;
     }
   },
+
   
   drawStars() {
     for (const s of this.stars) {
@@ -326,20 +343,6 @@ const Game = {
     document.getElementById('startLevel').textContent = State.meta.level;
     document.getElementById('startWave').textContent = State.meta.highestWave;
     document.getElementById('startRuns').textContent = State.meta.totalRuns;
-  
-
-    // Current node info + available connections
-    try {
-      const node = MapMeta.getCurrentNode?.() || null;
-      const nameEl = document.getElementById('startNodeName');
-      const tierEl = document.getElementById('startNodeTier');
-      if (nameEl) nameEl.textContent = node ? `${node.id} (${node.type})` : '—';
-      if (tierEl) tierEl.textContent = node ? node.tier : '—';
-      this.renderNodeOptions();
-    } catch (e) {
-      console.warn('Node info render failed:', e);
-    }
-
   },
   
   showModal(id) {
@@ -348,71 +351,6 @@ const Game = {
   
   hideModal(id) {
     document.getElementById(id)?.classList.remove('active');
-  },
-
-  renderNodeOptions() {
-    const container = document.getElementById('startNodeOptions');
-    if (!container) return;
-
-    const cur = MapMeta.getCurrentNode?.();
-    const connected = cur ? MapMeta.getConnected(cur.id) : [];
-
-    container.innerHTML = '';
-
-    // current node button (replay)
-    if (cur) {
-      const btn = document.createElement('button');
-      btn.className = 'btn';
-      btn.textContent = `Replay: ${cur.type} (Tier ${cur.tier})`;
-      btn.onclick = () => this.selectNode(cur.id);
-      container.appendChild(btn);
-    }
-
-    for (const n of connected) {
-      if (!n) continue;
-      const btn = document.createElement('button');
-      btn.className = 'btn primary';
-      btn.textContent = `Go: ${n.type} (Tier ${n.tier})`;
-      btn.onclick = () => this.selectNode(n.id);
-      container.appendChild(btn);
-    }
-
-    if (!cur) {
-      const note = document.createElement('div');
-      note.style.opacity = '0.8';
-      note.textContent = 'No node selected.';
-      container.appendChild(note);
-    }
-  },
-
-  selectNode(nodeId) {
-    const ok = MapMeta.setCurrentNode?.(nodeId);
-    if (!ok) {
-      this.announce?.('Node locked', 'bad');
-      return;
-    }
-    Save.save?.();
-    this.updateStartModal();
-    this.announce?.('Node selected', 'good');
-  },
-
-  enterPortal() {
-    // Called when player touches portal pickup after boss
-    try {
-      const nodeId = State.run.pendingNodeClear;
-      if (nodeId) {
-        MapMeta.markCleared(nodeId);
-      }
-      Save.save();
-
-      // Return to base/start modal
-      this.announce('Node cleared — returning to base', 'good');
-      this.toMenu();
-    } catch (e) {
-      console.error('enterPortal failed', e);
-      // fallback: at least go to menu
-      this.toMenu();
-    }
   },
   
   // ========== DEBUG ==========
