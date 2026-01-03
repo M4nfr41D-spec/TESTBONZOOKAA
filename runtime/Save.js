@@ -3,15 +3,10 @@
 // ============================================================
 // Handles saving/loading meta state to LocalStorage
 
-import { State } from './State.js';
+import { State, cloneState } from './State.js';
 
 const SAVE_KEY = 'bonzookaa_save_v2';
 const BACKUP_KEY = 'bonzookaa_backup_v2';
-
-// Deep clone helper
-function cloneState(obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
 
 export const Save = {
   // Save meta state to LocalStorage

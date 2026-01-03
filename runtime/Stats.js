@@ -100,16 +100,6 @@ export const Stats = {
     p.projectiles = Math.max(1, Math.floor(p.projectiles));
     p.piercing = Math.max(0, Math.floor(p.piercing));
     p.pickupRadius = Math.max(20, Math.round(p.pickupRadius));
-
-    // Softcap pickup radius (prevents whole-screen vacuum)
-    const softCap = 300;
-    const hardCap = 500;
-    if (p.pickupRadius > softCap) {
-      const over = p.pickupRadius - softCap;
-      p.pickupRadius = softCap + Math.round(over * 0.35);
-    }
-    p.pickupRadius = Math.min(p.pickupRadius, hardCap);
-
     
     // Cap HP if needed
     if (p.hp > p.maxHP) p.hp = p.maxHP;
