@@ -156,7 +156,25 @@ export const Particles = {
     });
   },
   
-  // Clear all particles
+  
+
+// Named particle effects used by other systems (safe no-op fallback)
+spawn(x, y, effectId) {
+  switch (effectId) {
+    case 'muzzle':
+      // Small forward spark burst
+      this.sparks(x, y, '#ffd27a', 6);
+      break;
+    case 'playerHit':
+      this.sparks(x, y, '#7ae7ff', 10);
+      break;
+    default:
+      // Unknown effect: do nothing (never crash game loop)
+      break;
+  }
+},
+
+// Clear all particles
   clear() {
     State.particles = [];
   }
