@@ -43,7 +43,11 @@ const Game = {
     Save.load();
     
     // Init persistent map layer (acts/clusters/nodes)
-    MapMeta.init();
+    try {
+      MapMeta.init();
+    } catch (e) {
+      console.error('❌ MapMeta.init failed - continuing without meta map', e);
+    }
     
     // Initialize systems
     Input.init(this.canvas);
