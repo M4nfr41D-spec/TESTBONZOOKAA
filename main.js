@@ -348,7 +348,7 @@ const Game = {
   
   hideModal(id) {
     document.getElementById(id)?.classList.remove('active');
-  }
+  },
 
   renderNodeOptions() {
     const container = document.getElementById('startNodeOptions');
@@ -414,7 +414,6 @@ const Game = {
       this.toMenu();
     }
   },
-,
   
   // ========== DEBUG ==========
   
