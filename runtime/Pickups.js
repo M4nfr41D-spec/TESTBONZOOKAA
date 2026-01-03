@@ -13,6 +13,20 @@ export const Pickups = {
     for (let i = State.pickups.length - 1; i >= 0; i--) {
       const pk = State.pickups[i];
       
+
+      // Portal pickup: no magnet, triggers node exit
+      if (pk.type === 'portal') {
+        const dxp = p.x - pk.x;
+        const dyp = p.y - pk.y;
+        const distp = Math.hypot(dxp, dyp);
+        if (distp < 35) {
+          if (window.Game && typeof window.Game.enterPortal === 'function') {
+            window.Game.enterPortal();
+          }
+          State.pickups.splice(i, 1);
+        }
+        continue;
+      }
       // Gravity
       pk.vy += 100 * dt;
       pk.x += pk.vx * dt;

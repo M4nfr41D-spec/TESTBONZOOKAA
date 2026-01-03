@@ -7,34 +7,6 @@ import { Enemies } from './Enemies.js';
 import { Player } from './Player.js';
 
 export const Bullets = {
-  // Spawn player bullet
-  spawn(config) {
-    State.bullets.push({
-      x: config.x,
-      y: config.y,
-      vx: config.vx || 0,
-      vy: config.vy || -500,
-      damage: config.damage || 10,
-      size: config.size || 4,
-      pierce: config.piercing || 0,
-      hits: 0,
-      isCrit: config.crit || false,
-      isPlayer: config.isPlayer !== false
-    });
-  },
-
-  // Spawn enemy bullet (optional helper)
-  spawnEnemy(config) {
-    State.enemyBullets.push({
-      x: config.x,
-      y: config.y,
-      vx: config.vx || 0,
-      vy: config.vy || 200,
-      damage: config.damage || 10,
-      size: config.size || 6
-    });
-  },
-
   // Update all bullets
   update(dt, canvas) {
     // Player bullets
@@ -140,6 +112,22 @@ export const Bullets = {
     
     // Loot drop check
     this.checkLootDrop(killData);
+  
+
+    // Boss: spawn portal after loot drops (node exit)
+    if (killData.isBoss) {
+      State.pickups.push({
+        type: 'portal',
+        x: killData.x,
+        y: killData.y,
+        vx: 0,
+        vy: 0,
+        life: 999999
+      });
+      State.run.portalOpen = true;
+      State.run.pendingNodeClear = State.meta?.map?.current?.nodeId || null;
+    }
+
   },
   
   // Check for item drop
