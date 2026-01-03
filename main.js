@@ -15,6 +15,7 @@ import { Pickups } from './runtime/Pickups.js';
 import { Particles } from './runtime/Particles.js';
 import { Input } from './runtime/Input.js';
 import { UI } from './runtime/UI.js';
+import { MapMeta } from './runtime/MapMeta.js';
 
 // ============================================================
 // GAME CONTROLLER
@@ -40,6 +41,9 @@ const Game = {
     
     // Load save
     Save.load();
+    
+    // Init persistent map layer (acts/clusters/nodes)
+    MapMeta.init();
     
     // Initialize systems
     Input.init(this.canvas);
@@ -106,21 +110,25 @@ const Game = {
   
   // Main loop
   loop(time) {
-    const dt = Math.min((time - this.lastTime) / 1000, 0.05);
-    this.lastTime = time;
-    
-    // Clear
-    this.ctx.fillStyle = '#050810';
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    
-    // Stars always
-    this.updateStars(dt);
-    this.drawStars();
-    
-    // Game logic
-    if (State.run.active && !State.ui.paused) {
-      this.update(dt);
-      this.draw();
+    try {
+      const dt = Math.min((time - this.lastTime) / 1000, 0.05);
+      this.lastTime = time;
+      
+      // Clear
+      this.ctx.fillStyle = '#050810';
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      
+      // Stars always
+      this.updateStars(dt);
+      this.drawStars();
+      
+      // Game logic
+      if (State.run.active && !State.ui.paused) {
+        this.update(dt);
+        this.draw();
+      }
+    } catch (error) {
+      console.error('❌ Error in game loop:', error);
     }
     
     requestAnimationFrame((t) => this.loop(t));
@@ -179,19 +187,27 @@ const Game = {
   // ========== GAME FLOW ==========
   
   start() {
-    resetRun();
-    State.run.active = true;
-    State.run.wave = 0;
+    console.log('🎮 Game.start() called');
     
-    Stats.calculate();
-    Stats.initializeHP();
-    
-    resetPlayer(this.canvas.width, this.canvas.height);
-    
-    this.hideModal('startModal');
-    this.nextWave();
-    
-    UI.renderAll();
+    try {
+      resetRun();
+      State.run.active = true;
+      State.run.wave = 0;
+      
+      Stats.calculate();
+      Stats.initializeHP();
+      
+      resetPlayer(this.canvas.width, this.canvas.height);
+      
+      this.hideModal('startModal');
+      this.nextWave();
+      
+      UI.renderAll();
+      
+      console.log('✅ Game started successfully');
+    } catch (error) {
+      console.error('❌ Error starting game:', error);
+    }
   },
   
   nextWave() {
@@ -288,7 +304,7 @@ const Game = {
     
     // XP
     const xpProgress = Leveling.getProgress();
-    const xpNeeded = Leveling.getXPForLevel(State.meta.level);
+    const xpNeeded = Leveling.xpForLevel(State.meta.level);
     document.getElementById('xpBar').style.width = (xpProgress * 100) + '%';
     document.getElementById('xpText').textContent = `${State.meta.xp} / ${xpNeeded} XP`;
     
