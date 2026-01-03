@@ -170,15 +170,36 @@ const Game = {
   },
   
   updateStars(dt) {
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+
+    // Tie background motion to player velocity (no forced auto-scroll).
+    const p = State.player || {};
+    const vx = (State.run.active && State.run.active === true) ? (p.vx || 0) : 0;
+    const vy = (State.run.active && State.run.active === true) ? (p.vy || 0) : 0;
+
     for (const s of this.stars) {
-      s.y += s.speed * dt;
-      if (s.y > this.canvas.height) {
-        s.y = 0;
-        s.x = Math.random() * this.canvas.width;
+      // Star "speed" doubles as depth: closer stars move more (parallax).
+      const depth = Math.max(0, Math.min(1, (s.speed - 15) / 40)); // 0..1
+      const parallax = 0.06 + depth * 0.22; // 0.06..0.28
+
+      s.x += (-vx) * parallax * dt;
+      s.y += (-vy) * parallax * dt;
+
+      // Optional idle drift on menus only (very subtle life in the background)
+      if (!State.run.active) {
+        s.y += s.speed * dt * 0.15;
       }
+
+      // Wrap around screen
+      if (s.x < 0) s.x += w;
+      else if (s.x > w) s.x -= w;
+
+      if (s.y < 0) s.y += h;
+      else if (s.y > h) s.y -= h;
     }
   },
-  
+
   drawStars() {
     for (const s of this.stars) {
       this.ctx.fillStyle = `rgba(255,255,255,${s.brightness})`;
