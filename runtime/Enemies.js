@@ -3,6 +3,7 @@
 // ============================================================
 
 import { State } from './State.js';
+import { Scaling } from './Scaling.js';
 
 export const Enemies = {
   // Spawn an enemy
@@ -15,8 +16,20 @@ export const Enemies = {
       return enemy;
     }
     
-    const waveScale = 1 + State.run.wave * 0.05;
-    
+const waveScale = 1 + State.run.wave * 0.05;
+
+// Node/Act scaling (Δ=1.5): normals slightly below player, elites/bosses above
+const nodeTier = Scaling.currentNodeTier();
+const playerLevel = State.meta.level || 1;
+const kind = isBoss ? "BOSS" : (isElite ? "ELITE" : "NORMAL");
+const enemyLevel = Scaling.enemyLevel(playerLevel, nodeTier, kind);
+
+const baseHP = enemyData.hp;
+const baseDMG = enemyData.damage;
+
+const scaledHP = Scaling.hp(baseHP, enemyLevel, nodeTier, kind) * waveScale;
+const scaledDMG = Scaling.damage(baseDMG, enemyLevel, nodeTier, kind) * waveScale;
+
     const enemy = {
       id: 'e_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       type: type,
@@ -24,10 +37,11 @@ export const Enemies = {
       y: y,
       vx: 0,
       vy: 0,
-      hp: enemyData.hp * waveScale * (isElite ? 2 : 1) * (isBoss ? 5 : 1),
-      maxHP: enemyData.hp * waveScale * (isElite ? 2 : 1) * (isBoss ? 5 : 1),
-      damage: enemyData.damage * waveScale,
-      speed: enemyData.speed,
+      level: enemyLevel,
+      hp: scaledHP,
+      maxHP: scaledHP,
+      damage: scaledDMG,
+      speed: enemyData.speed * (1 + nodeTier * 0.005) * (isElite ? 1.05 : 1) * (isBoss ? 0.95 : 1),
       score: enemyData.score * (isElite ? 3 : 1) * (isBoss ? 10 : 1),
       xp: enemyData.xp * (isElite ? 2 : 1) * (isBoss ? 5 : 1),
       color: isElite ? '#ffaa00' : (isBoss ? '#ff3355' : enemyData.color),
@@ -156,14 +170,28 @@ export const Enemies = {
         e.vx = Math.sin(e.patternTime * 3) * e.speed * 0.8;
         break;
       case 'charge':
+        // Steering charge: constantly seeks player but with limited turn rate (prevents "floating with player")
         if (e.patternTime > 1) {
           const p = State.player;
           const dx = p.x - e.x, dy = p.y - e.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist > 10) {
-            e.vx = (dx / dist) * e.speed * 1.5;
-            e.vy = (dy / dist) * e.speed * 1.5;
-          }
+          const desired = Math.atan2(dy, dx);
+
+          // current movement angle
+          const curSpeed = Math.hypot(e.vx, e.vy);
+          let current = curSpeed > 0.01 ? Math.atan2(e.vy, e.vx) : desired;
+
+          // normalize diff to [-PI, PI]
+          let diff = desired - current;
+          while (diff > Math.PI) diff -= Math.PI * 2;
+          while (diff < -Math.PI) diff += Math.PI * 2;
+
+          const maxTurn = 3.0 * dt; // rad/sec -> rad/frame
+          diff = Math.max(-maxTurn, Math.min(maxTurn, diff));
+          const next = current + diff;
+
+          const spd = e.speed * 1.5;
+          e.vx = Math.cos(next) * spd;
+          e.vy = Math.sin(next) * spd;
         } else {
           e.vy = e.speed * 0.2;
         }

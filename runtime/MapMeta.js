@@ -15,7 +15,6 @@ function mulberry32(seed) {
   };
 }
 
-// Small stable string hash (FNV-1a-ish)
 function hashSeed(str) {
   let h = 2166136261;
   for (let i = 0; i < str.length; i++) {
@@ -25,8 +24,11 @@ function hashSeed(str) {
   return h >>> 0;
 }
 
+function clamp(v, a, b) {
+  return Math.max(a, Math.min(b, v));
+}
+
 function rollType(i) {
-  // 30 nodes per cluster, last = boss
   if (i === 29) return "BOSS";
   if (i % 7 === 0) return "EVENT";
   if (i % 5 === 0) return "RESOURCE";
@@ -46,7 +48,6 @@ function rollMods(rng) {
     "XP_BOOST"
   ];
 
-  // ~40% chance to have 1 mod, ~10% chance to have 2 mods
   const mods = [];
   const r = rng();
   if (r < 0.40) mods.push(pool[Math.floor(rng() * pool.length)]);
@@ -68,14 +69,14 @@ function generateCluster(clusterId, baseTier = 1) {
       id,
       index: i,
       type: rollType(i),
-      tier: baseTier + Math.floor(i / 3), // gentle tier ramp
+      tier: baseTier + Math.floor(i / 3),
       seed: Math.floor(rng() * 1e9),
       mods: rollMods(rng),
       connections: []
     });
   }
 
-  // Graph: mostly forward, some branches + a few back-links
+  // Mostly forward, some branches + some back edges (exploration feel)
   for (let i = 0; i < nodes.length; i++) {
     const n = nodes[i];
     if (i < nodes.length - 1) n.connections.push(nodes[i + 1].id);
@@ -108,8 +109,9 @@ function generateDefaultActs() {
 
 export const MapMeta = {
   init() {
-    // Robustness: older saves or experimental branches may have a non-object `meta.map`
-    if (!State.meta.map || typeof State.meta.map !== 'object' || Array.isArray(State.meta.map)) {
+    // Hard-guard against old/inconsistent saves
+    if (typeof State.meta !== "object" || State.meta === null) State.meta = {};
+    if (typeof State.meta.map !== "object" || State.meta.map === null || Array.isArray(State.meta.map)) {
       State.meta.map = {
         version: 1,
         acts: [],
@@ -123,31 +125,36 @@ export const MapMeta = {
 
     const map = State.meta.map;
 
-    // First boot / empty acts: generate
-    if (!map.acts || map.acts.length === 0) {
+    if (!Array.isArray(map.acts) || map.acts.length === 0) {
       map.acts = generateDefaultActs();
-      map.unlockedActs = map.unlockedActs?.length ? map.unlockedActs : ["ACT_01"];
-      map.current = map.current || { actId: "ACT_01", clusterId: "ACT_01_C1", nodeId: "ACT_01_C1_N0" };
-      map.unlockedNodes = map.unlockedNodes || {};
-      map.clearedNodes = map.clearedNodes || {};
-      map.fastTravel = map.fastTravel || {};
+      if (!Array.isArray(map.unlockedActs) || map.unlockedActs.length === 0) map.unlockedActs = ["ACT_01"];
+      if (!map.current || typeof map.current !== "object") {
+        map.current = { actId: "ACT_01", clusterId: "ACT_01_C1", nodeId: "ACT_01_C1_N0" };
+      }
+      if (!map.unlockedNodes || typeof map.unlockedNodes !== "object") map.unlockedNodes = {};
+      if (!map.clearedNodes || typeof map.clearedNodes !== "object") map.clearedNodes = {};
+      if (!map.fastTravel || typeof map.fastTravel !== "object") map.fastTravel = {};
       map.unlockedNodes[map.current.nodeId] = true;
     }
 
-    // Safety: ensure current node exists; else reset to first
+    // Ensure current node exists
     if (!this.getNode(map.current?.nodeId)) {
       const first = map.acts?.[0]?.clusters?.[0]?.nodes?.[0];
       if (first) {
-        map.current = { actId: "ACT_01", clusterId: "ACT_01_C1", nodeId: first.id };
+        map.current = { actId: map.acts[0].id, clusterId: map.acts[0].clusters[0].id, nodeId: first.id };
         map.unlockedNodes[first.id] = true;
       }
     }
   },
 
   getNode(nodeId) {
-    for (const act of State.meta.map.acts) {
-      for (const cl of act.clusters) {
-        const found = cl.nodes.find(n => n.id === nodeId);
+    if (!nodeId) return null;
+    const acts = State.meta.map?.acts;
+    if (!Array.isArray(acts)) return null;
+
+    for (const act of acts) {
+      for (const cl of act.clusters || []) {
+        const found = (cl.nodes || []).find(n => n.id === nodeId);
         if (found) return found;
       }
     }
@@ -155,7 +162,12 @@ export const MapMeta = {
   },
 
   getCurrentNode() {
-    return this.getNode(State.meta.map.current.nodeId);
+    return this.getNode(State.meta.map?.current?.nodeId);
+  },
+
+  getCurrentTier() {
+    const n = this.getCurrentNode();
+    return n?.tier ?? 1;
   },
 
   setCurrentNode(nodeId) {
@@ -175,14 +187,14 @@ export const MapMeta = {
   },
 
   markCleared(nodeId) {
-    State.meta.map.clearedNodes[nodeId] = true;
-    State.meta.map.fastTravel[nodeId] = true;
+    if (!nodeId) return;
+    const map = State.meta.map;
+    map.clearedNodes[nodeId] = true;
+    map.fastTravel[nodeId] = true;
 
     const node = this.getNode(nodeId);
     if (node) {
-      for (const nextId of node.connections) {
-        State.meta.map.unlockedNodes[nextId] = true;
-      }
+      for (const nextId of node.connections) map.unlockedNodes[nextId] = true;
     }
   },
 
@@ -192,7 +204,7 @@ export const MapMeta = {
   },
 
   getAct(actId) {
-    return State.meta.map.acts.find(a => a.id === actId) || null;
+    return (State.meta.map?.acts || []).find(a => a.id === actId) || null;
   }
 };
 
