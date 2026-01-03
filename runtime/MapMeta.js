@@ -125,6 +125,28 @@ export const MapMeta = {
 
     const map = State.meta.map;
 
+    // Schema normalization (protect against corrupted/old saves)
+    const schemaOk =
+      map &&
+      typeof map === 'object' &&
+      !Array.isArray(map) &&
+      Array.isArray(map.acts) &&
+      typeof map.current === 'object' &&
+      typeof map.current?.nodeId === 'string';
+
+    if (!schemaOk) {
+      // Reset to defaults if schema is broken
+      State.meta.map = {
+        version: 1,
+        acts: [],
+        unlockedActs: ['ACT_01'],
+        unlockedNodes: {},
+        clearedNodes: {},
+        fastTravel: {},
+        current: { actId: 'ACT_01', clusterId: 'ACT_01_C1', nodeId: 'ACT_01_C1_N0' }
+      };
+    }
+
     if (!Array.isArray(map.acts) || map.acts.length === 0) {
       map.acts = generateDefaultActs();
       if (!Array.isArray(map.unlockedActs) || map.unlockedActs.length === 0) map.unlockedActs = ["ACT_01"];
