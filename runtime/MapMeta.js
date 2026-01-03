@@ -4,7 +4,9 @@
 
 import { State } from "./State.js";
 
-// Simple deterministic RNG (mulberry32)
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+// deterministic RNG
 function mulberry32(seed) {
   let t = seed >>> 0;
   return function () {
@@ -22,10 +24,6 @@ function hashSeed(str) {
     h = Math.imul(h, 16777619);
   }
   return h >>> 0;
-}
-
-function clamp(v, a, b) {
-  return Math.max(a, Math.min(b, v));
 }
 
 function rollType(i) {
@@ -76,7 +74,6 @@ function generateCluster(clusterId, baseTier = 1) {
     });
   }
 
-  // Mostly forward, some branches + some back edges (exploration feel)
   for (let i = 0; i < nodes.length; i++) {
     const n = nodes[i];
     if (i < nodes.length - 1) n.connections.push(nodes[i + 1].id);
@@ -97,86 +94,70 @@ function generateDefaultActs() {
       id: actId,
       name: "Galaxie Asterion",
       clusters: [
-        {
-          id: clusterId,
-          name: "Wrackgürtel",
-          nodes: generateCluster(clusterId, 1)
-        }
+        { id: clusterId, name: "Wrackgürtel", nodes: generateCluster(clusterId, 1) }
       ]
     }
   ];
 }
 
+function normalizeMapSchema() {
+  if (!State.meta) return;
+
+  const m = State.meta.map;
+  const valid =
+    m &&
+    typeof m === "object" &&
+    Array.isArray(m.acts) &&
+    m.current &&
+    typeof m.current.nodeId === "string";
+
+  if (!valid) {
+    State.meta.map = {
+      version: 1,
+      acts: [],
+      unlockedActs: ["ACT_01"],
+      unlockedNodes: {},
+      clearedNodes: {},
+      fastTravel: {},
+      current: { actId: "ACT_01", clusterId: "ACT_01_C1", nodeId: "ACT_01_C1_N0" }
+    };
+  } else {
+    // ensure subfields exist
+    m.unlockedActs = Array.isArray(m.unlockedActs) ? m.unlockedActs : ["ACT_01"];
+    m.unlockedNodes = (m.unlockedNodes && typeof m.unlockedNodes === "object") ? m.unlockedNodes : {};
+    m.clearedNodes = (m.clearedNodes && typeof m.clearedNodes === "object") ? m.clearedNodes : {};
+    m.fastTravel = (m.fastTravel && typeof m.fastTravel === "object") ? m.fastTravel : {};
+  }
+}
+
 export const MapMeta = {
   init() {
-    // Hard-guard against old/inconsistent saves
-    if (typeof State.meta !== "object" || State.meta === null) State.meta = {};
-    if (typeof State.meta.map !== "object" || State.meta.map === null || Array.isArray(State.meta.map)) {
-      State.meta.map = {
-        version: 1,
-        acts: [],
-        unlockedActs: ["ACT_01"],
-        unlockedNodes: {},
-        clearedNodes: {},
-        fastTravel: {},
-        current: { actId: "ACT_01", clusterId: "ACT_01_C1", nodeId: "ACT_01_C1_N0" }
-      };
-    }
-
+    normalizeMapSchema();
     const map = State.meta.map;
 
-    // Schema normalization (protect against corrupted/old saves)
-    const schemaOk =
-      map &&
-      typeof map === 'object' &&
-      !Array.isArray(map) &&
-      Array.isArray(map.acts) &&
-      typeof map.current === 'object' &&
-      typeof map.current?.nodeId === 'string';
-
-    if (!schemaOk) {
-      // Reset to defaults if schema is broken
-      State.meta.map = {
-        version: 1,
-        acts: [],
-        unlockedActs: ['ACT_01'],
-        unlockedNodes: {},
-        clearedNodes: {},
-        fastTravel: {},
-        current: { actId: 'ACT_01', clusterId: 'ACT_01_C1', nodeId: 'ACT_01_C1_N0' }
-      };
-    }
-
-    if (!Array.isArray(map.acts) || map.acts.length === 0) {
+    if (!map.acts || map.acts.length === 0) {
       map.acts = generateDefaultActs();
-      if (!Array.isArray(map.unlockedActs) || map.unlockedActs.length === 0) map.unlockedActs = ["ACT_01"];
-      if (!map.current || typeof map.current !== "object") {
-        map.current = { actId: "ACT_01", clusterId: "ACT_01_C1", nodeId: "ACT_01_C1_N0" };
-      }
-      if (!map.unlockedNodes || typeof map.unlockedNodes !== "object") map.unlockedNodes = {};
-      if (!map.clearedNodes || typeof map.clearedNodes !== "object") map.clearedNodes = {};
-      if (!map.fastTravel || typeof map.fastTravel !== "object") map.fastTravel = {};
+      map.unlockedActs = map.unlockedActs?.length ? map.unlockedActs : ["ACT_01"];
+      map.current = map.current || { actId: "ACT_01", clusterId: "ACT_01_C1", nodeId: "ACT_01_C1_N0" };
+      map.unlockedNodes = map.unlockedNodes || {};
+      map.clearedNodes = map.clearedNodes || {};
+      map.fastTravel = map.fastTravel || {};
       map.unlockedNodes[map.current.nodeId] = true;
     }
 
-    // Ensure current node exists
-    if (!this.getNode(map.current?.nodeId)) {
+    if (!this.getNode(map.current.nodeId)) {
       const first = map.acts?.[0]?.clusters?.[0]?.nodes?.[0];
       if (first) {
-        map.current = { actId: map.acts[0].id, clusterId: map.acts[0].clusters[0].id, nodeId: first.id };
+        map.current = { actId: "ACT_01", clusterId: "ACT_01_C1", nodeId: first.id };
         map.unlockedNodes[first.id] = true;
       }
     }
   },
 
   getNode(nodeId) {
-    if (!nodeId) return null;
-    const acts = State.meta.map?.acts;
-    if (!Array.isArray(acts)) return null;
-
-    for (const act of acts) {
-      for (const cl of act.clusters || []) {
-        const found = (cl.nodes || []).find(n => n.id === nodeId);
+    for (const act of State.meta.map.acts) {
+      for (const cl of act.clusters) {
+        const found = cl.nodes.find((n) => n.id === nodeId);
         if (found) return found;
       }
     }
@@ -184,12 +165,7 @@ export const MapMeta = {
   },
 
   getCurrentNode() {
-    return this.getNode(State.meta.map?.current?.nodeId);
-  },
-
-  getCurrentTier() {
-    const n = this.getCurrentNode();
-    return n?.tier ?? 1;
+    return this.getNode(State.meta.map.current.nodeId);
   },
 
   setCurrentNode(nodeId) {
@@ -209,24 +185,21 @@ export const MapMeta = {
   },
 
   markCleared(nodeId) {
-    if (!nodeId) return;
     const map = State.meta.map;
     map.clearedNodes[nodeId] = true;
     map.fastTravel[nodeId] = true;
 
     const node = this.getNode(nodeId);
     if (node) {
-      for (const nextId of node.connections) map.unlockedNodes[nextId] = true;
+      for (const nextId of node.connections) {
+        map.unlockedNodes[nextId] = true;
+      }
     }
   },
 
   getConnected(nodeId) {
     const node = this.getNode(nodeId);
-    return node ? node.connections.map(id => this.getNode(id)).filter(Boolean) : [];
-  },
-
-  getAct(actId) {
-    return (State.meta.map?.acts || []).find(a => a.id === actId) || null;
+    return node ? node.connections.map((id) => this.getNode(id)).filter(Boolean) : [];
   }
 };
 

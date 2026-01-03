@@ -3,6 +3,7 @@
 // ============================================================
 
 import { State } from './State.js';
+import { MapMeta } from './MapMeta.js';
 import { Scaling } from './Scaling.js';
 
 export const Enemies = {
@@ -16,20 +17,17 @@ export const Enemies = {
       return enemy;
     }
     
-const waveScale = 1 + State.run.wave * 0.05;
+    const waveScale = 1 + State.run.wave * 0.05;
 
-// Node/Act scaling (Δ=1.5): normals slightly below player, elites/bosses above
-const nodeTier = Scaling.currentNodeTier();
-const playerLevel = State.meta.level || 1;
-const kind = isBoss ? "BOSS" : (isElite ? "ELITE" : "NORMAL");
-const enemyLevel = Scaling.enemyLevel(playerLevel, nodeTier, kind);
+    const node = MapMeta.getCurrentNode?.() ? MapMeta.getCurrentNode() : null;
+    const nodeTier = node?.tier ?? 1;
+    const playerLevel = State.meta?.level ?? 1;
+    const kind = isBoss ? 'BOSS' : (isElite ? 'ELITE' : 'NORMAL');
+    const eLevel = Scaling.enemyLevel(playerLevel, nodeTier, kind);
+    const scaledHP = Scaling.hp(enemyData.hp, eLevel, nodeTier, kind);
+    const scaledDMG = Scaling.damage(enemyData.damage, eLevel, nodeTier, kind);
 
-const baseHP = enemyData.hp;
-const baseDMG = enemyData.damage;
-
-const scaledHP = Scaling.hp(baseHP, enemyLevel, nodeTier, kind) * waveScale;
-const scaledDMG = Scaling.damage(baseDMG, enemyLevel, nodeTier, kind) * waveScale;
-
+    
     const enemy = {
       id: 'e_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       type: type,
@@ -37,11 +35,11 @@ const scaledDMG = Scaling.damage(baseDMG, enemyLevel, nodeTier, kind) * waveScal
       y: y,
       vx: 0,
       vy: 0,
-      level: enemyLevel,
-      hp: scaledHP,
-      maxHP: scaledHP,
-      damage: scaledDMG,
-      speed: enemyData.speed * (1 + nodeTier * 0.005) * (isElite ? 1.05 : 1) * (isBoss ? 0.95 : 1),
+      hp: scaledHP * waveScale,
+      level: eLevel,
+      maxHP: scaledHP * waveScale,
+      damage: scaledDMG * waveScale,
+      speed: enemyData.speed,
       score: enemyData.score * (isElite ? 3 : 1) * (isBoss ? 10 : 1),
       xp: enemyData.xp * (isElite ? 2 : 1) * (isBoss ? 5 : 1),
       color: isElite ? '#ffaa00' : (isBoss ? '#ff3355' : enemyData.color),
@@ -169,33 +167,47 @@ const scaledDMG = Scaling.damage(baseDMG, enemyLevel, nodeTier, kind) * waveScal
         e.vy = e.speed * 0.5;
         e.vx = Math.sin(e.patternTime * 3) * e.speed * 0.8;
         break;
-      case 'charge':
-        // Steering charge: constantly seeks player but with limited turn rate (prevents "floating with player")
-        if (e.patternTime > 1) {
-          const p = State.player;
+      case 'charge': {
+        // Steering charge: avoids "glued to player" feel
+        const p = State.player;
+
+        // acquire initial intent shortly before charge
+        if (!e._chargeInit && e.patternTime > 1) {
           const dx = p.x - e.x, dy = p.y - e.y;
-          const desired = Math.atan2(dy, dx);
-
-          // current movement angle
-          const curSpeed = Math.hypot(e.vx, e.vy);
-          let current = curSpeed > 0.01 ? Math.atan2(e.vy, e.vx) : desired;
-
-          // normalize diff to [-PI, PI]
-          let diff = desired - current;
-          while (diff > Math.PI) diff -= Math.PI * 2;
-          while (diff < -Math.PI) diff += Math.PI * 2;
-
-          const maxTurn = 3.0 * dt; // rad/sec -> rad/frame
-          diff = Math.max(-maxTurn, Math.min(maxTurn, diff));
-          const next = current + diff;
-
-          const spd = e.speed * 1.5;
-          e.vx = Math.cos(next) * spd;
-          e.vy = Math.sin(next) * spd;
-        } else {
-          e.vy = e.speed * 0.2;
+          const dist = Math.hypot(dx, dy) || 1;
+          e._chargeDirX = dx / dist;
+          e._chargeDirY = dy / dist;
+          e._chargeInit = true;
         }
+
+        if (e.patternTime <= 1) {
+          e.vy = e.speed * 0.2;
+          break;
+        }
+
+        // desired direction (updates), but turning is limited
+        const dx = p.x - e.x, dy = p.y - e.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const desX = dx / dist;
+        const desY = dy / dist;
+
+        const turn = 3.2 * dt; // max turn per second (tune)
+        e._chargeDirX = e._chargeDirX ?? desX;
+        e._chargeDirY = e._chargeDirY ?? desY;
+
+        // lerp dir towards desired with turn limit
+        e._chargeDirX += (desX - e._chargeDirX) * turn;
+        e._chargeDirY += (desY - e._chargeDirY) * turn;
+
+        // normalize
+        const d2 = Math.hypot(e._chargeDirX, e._chargeDirY) || 1;
+        e._chargeDirX /= d2;
+        e._chargeDirY /= d2;
+
+        e.vx = e._chargeDirX * e.speed * 1.5;
+        e.vy = e._chargeDirY * e.speed * 1.5;
         break;
+      }
       default:
         e.vy = e.speed;
     }

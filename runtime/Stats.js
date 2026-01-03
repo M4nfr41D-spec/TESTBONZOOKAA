@@ -101,14 +101,15 @@ export const Stats = {
     p.piercing = Math.max(0, Math.floor(p.piercing));
     p.pickupRadius = Math.max(20, Math.round(p.pickupRadius));
 
-    // Soft-cap pickup magnet (Comfort profile): strong early, diminishing returns later
-    // Prevents "everything floats with the player" behavior when pickupRadius gets too large
+    // Softcap pickup radius (prevents whole-screen vacuum)
     const softCap = 300;
+    const hardCap = 500;
     if (p.pickupRadius > softCap) {
-      const excess = p.pickupRadius - softCap;
-      p.pickupRadius = Math.round(softCap + excess * 0.25);
+      const over = p.pickupRadius - softCap;
+      p.pickupRadius = softCap + Math.round(over * 0.35);
     }
-    p.pickupRadius = Math.min(p.pickupRadius, 500);
+    p.pickupRadius = Math.min(p.pickupRadius, hardCap);
+
     
     // Cap HP if needed
     if (p.hp > p.maxHP) p.hp = p.maxHP;

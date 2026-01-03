@@ -30,23 +30,24 @@ export const State = {
     highestWave: 0,
     totalRuns: 0,
     totalKills: 0,
-    totalPlaytime: 0,
+    totalPlaytime: 0
+  
 
 // ====== META MAP (Node-to-Node) ======
 map: {
   version: 1,
-  acts: [],                // generated on first boot (MapMeta.init)
+  acts: [],
   unlockedActs: ["ACT_01"],
-  unlockedNodes: {},       // { nodeId: true }
-  clearedNodes: {},        // { nodeId: true }
-  fastTravel: {},          // { nodeId: true }
+  unlockedNodes: {},
+  clearedNodes: {},
+  fastTravel: {},
   current: {
     actId: "ACT_01",
     clusterId: "ACT_01_C1",
     nodeId: "ACT_01_C1_N0"
   }
-}
-  },
+},
+},
   
   // Current run state (reset each run)
   run: {
@@ -124,8 +125,6 @@ export function resetRun() {
   State.run = {
     active: false,
     wave: 0,
-    portalOpen: false,
-    pendingNodeClear: null,
     cells: 0,
     scrapEarned: 0,
     xpEarned: 0,

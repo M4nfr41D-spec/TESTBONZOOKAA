@@ -112,22 +112,6 @@ export const Bullets = {
     
     // Loot drop check
     this.checkLootDrop(killData);
-  
-
-    // Boss: spawn portal after loot drops (node exit)
-    if (killData.isBoss) {
-      State.pickups.push({
-        type: 'portal',
-        x: killData.x,
-        y: killData.y,
-        vx: 0,
-        vy: 0,
-        life: 999999
-      });
-      State.run.portalOpen = true;
-      State.run.pendingNodeClear = State.meta?.map?.current?.nodeId || null;
-    }
-
   },
   
   // Check for item drop
