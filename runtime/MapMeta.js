@@ -108,6 +108,19 @@ function generateDefaultActs() {
 
 export const MapMeta = {
   init() {
+    // Robustness: older saves or experimental branches may have a non-object `meta.map`
+    if (!State.meta.map || typeof State.meta.map !== 'object' || Array.isArray(State.meta.map)) {
+      State.meta.map = {
+        version: 1,
+        acts: [],
+        unlockedActs: ["ACT_01"],
+        unlockedNodes: {},
+        clearedNodes: {},
+        fastTravel: {},
+        current: { actId: "ACT_01", clusterId: "ACT_01_C1", nodeId: "ACT_01_C1_N0" }
+      };
+    }
+
     const map = State.meta.map;
 
     // First boot / empty acts: generate
