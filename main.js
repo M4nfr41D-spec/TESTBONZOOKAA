@@ -41,13 +41,9 @@ const Game = {
     
     // Load save
     Save.load();
-    
+
     // Init persistent map layer (acts/clusters/nodes)
-    try {
-      MapMeta.init();
-    } catch (e) {
-      console.error('❌ MapMeta.init failed - continuing without meta map', e);
-    }
+    try { MapMeta.init(); } catch (e) { console.error('MapMeta.init failed', e); }
     
     // Initialize systems
     Input.init(this.canvas);
@@ -170,36 +166,15 @@ const Game = {
   },
   
   updateStars(dt) {
-    const w = this.canvas.width;
-    const h = this.canvas.height;
-
-    // Tie background motion to player velocity (no forced auto-scroll).
-    const p = State.player || {};
-    const vx = (State.run.active && State.run.active === true) ? (p.vx || 0) : 0;
-    const vy = (State.run.active && State.run.active === true) ? (p.vy || 0) : 0;
-
     for (const s of this.stars) {
-      // Star "speed" doubles as depth: closer stars move more (parallax).
-      const depth = Math.max(0, Math.min(1, (s.speed - 15) / 40)); // 0..1
-      const parallax = 0.06 + depth * 0.22; // 0.06..0.28
-
-      s.x += (-vx) * parallax * dt;
-      s.y += (-vy) * parallax * dt;
-
-      // Optional idle drift on menus only (very subtle life in the background)
-      if (!State.run.active) {
-        s.y += s.speed * dt * 0.15;
+      s.y += s.speed * dt;
+      if (s.y > this.canvas.height) {
+        s.y = 0;
+        s.x = Math.random() * this.canvas.width;
       }
-
-      // Wrap around screen
-      if (s.x < 0) s.x += w;
-      else if (s.x > w) s.x -= w;
-
-      if (s.y < 0) s.y += h;
-      else if (s.y > h) s.y -= h;
     }
   },
-
+  
   drawStars() {
     for (const s of this.stars) {
       this.ctx.fillStyle = `rgba(255,255,255,${s.brightness})`;
@@ -351,6 +326,20 @@ const Game = {
     document.getElementById('startLevel').textContent = State.meta.level;
     document.getElementById('startWave').textContent = State.meta.highestWave;
     document.getElementById('startRuns').textContent = State.meta.totalRuns;
+  
+
+    // Current node info + available connections
+    try {
+      const node = MapMeta.getCurrentNode?.() || null;
+      const nameEl = document.getElementById('startNodeName');
+      const tierEl = document.getElementById('startNodeTier');
+      if (nameEl) nameEl.textContent = node ? `${node.id} (${node.type})` : '—';
+      if (tierEl) tierEl.textContent = node ? node.tier : '—';
+      this.renderNodeOptions();
+    } catch (e) {
+      console.warn('Node info render failed:', e);
+    }
+
   },
   
   showModal(id) {
@@ -359,7 +348,73 @@ const Game = {
   
   hideModal(id) {
     document.getElementById(id)?.classList.remove('active');
+  }
+
+  renderNodeOptions() {
+    const container = document.getElementById('startNodeOptions');
+    if (!container) return;
+
+    const cur = MapMeta.getCurrentNode?.();
+    const connected = cur ? MapMeta.getConnected(cur.id) : [];
+
+    container.innerHTML = '';
+
+    // current node button (replay)
+    if (cur) {
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      btn.textContent = `Replay: ${cur.type} (Tier ${cur.tier})`;
+      btn.onclick = () => this.selectNode(cur.id);
+      container.appendChild(btn);
+    }
+
+    for (const n of connected) {
+      if (!n) continue;
+      const btn = document.createElement('button');
+      btn.className = 'btn primary';
+      btn.textContent = `Go: ${n.type} (Tier ${n.tier})`;
+      btn.onclick = () => this.selectNode(n.id);
+      container.appendChild(btn);
+    }
+
+    if (!cur) {
+      const note = document.createElement('div');
+      note.style.opacity = '0.8';
+      note.textContent = 'No node selected.';
+      container.appendChild(note);
+    }
   },
+
+  selectNode(nodeId) {
+    const ok = MapMeta.setCurrentNode?.(nodeId);
+    if (!ok) {
+      this.announce?.('Node locked', 'bad');
+      return;
+    }
+    Save.save?.();
+    this.updateStartModal();
+    this.announce?.('Node selected', 'good');
+  },
+
+  enterPortal() {
+    // Called when player touches portal pickup after boss
+    try {
+      const nodeId = State.run.pendingNodeClear;
+      if (nodeId) {
+        MapMeta.markCleared(nodeId);
+      }
+      Save.save();
+
+      // Return to base/start modal
+      this.announce('Node cleared — returning to base', 'good');
+      this.toMenu();
+    } catch (e) {
+      console.error('enterPortal failed', e);
+      // fallback: at least go to menu
+      this.toMenu();
+    }
+  },
+,
   
   // ========== DEBUG ==========
   
